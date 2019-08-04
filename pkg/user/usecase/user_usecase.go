@@ -10,7 +10,7 @@ import (
 // UserUsecase defines interface for all user usecases
 type UserUsecase interface {
 	ListUser() ([]*User, error)
-	RegisterUser(email, firstName, lastName string) error
+	RegisterUser(email string) error
 }
 
 type userUsecase struct {
@@ -34,7 +34,7 @@ func (u *userUsecase) ListUser() ([]*User, error) {
 	return toUser(users), nil
 }
 
-func (u *userUsecase) RegisterUser(email, firstName, lastName string) error {
+func (u *userUsecase) RegisterUser(email string) error {
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (u *userUsecase) RegisterUser(email, firstName, lastName string) error {
 	if err := u.service.Duplicated(email); err != nil {
 		return err
 	}
-	user := model.NewUser(uid.String(), email, firstName, lastName)
+	user := model.NewUser(uid.String(), email)
 	if err := u.repo.Save(user); err != nil {
 		return err
 	}

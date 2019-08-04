@@ -27,7 +27,7 @@ func (r *userRepository) FindAll() ([]*model.User, error) {
 	users := make([]*model.User, len(r.users))
 	i := 0
 	for _, user := range r.users {
-		users[i] = model.NewUser(user.ID, user.Email, user.FirstName, user.LastName)
+		users[i] = model.NewUser(user.ID, user.Email)
 		i++
 	}
 
@@ -40,7 +40,7 @@ func (r *userRepository) FindByEmail(email string) (*model.User, error) {
 
 	for _, user := range r.users {
 		if user.Email == email {
-			return model.NewUser(user.ID, user.Email, user.FirstName, user.LastName), nil
+			return model.NewUser(user.ID, user.Email), nil
 		}
 	}
 	return nil, nil

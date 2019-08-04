@@ -9,12 +9,10 @@ type User struct {
 }
 
 // NewUser returns new instance of the user
-func NewUser(id, email, firstName, lastName string) *User {
+func NewUser(id, email string) *User {
 	return &User{
-		id:        id,
-		email:     email,
-		firstName: firstName,
-		lastName:  lastName,
+		id:    id,
+		email: email,
 	}
 }
 
