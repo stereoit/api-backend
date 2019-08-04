@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: "Eventival API"
+  version: "1.0.0"
+  contact:
+    name: Robert Smol
+    email: robert.smol@stereoit.com
+
+servers:
+  - url: http://localhost:8000
+    description: Localhost server
+
+paths:
+  /hello:
+    get:
+      operationId: getHello
+      summary: Simple hello message endpoint
+      responses:
+        '200':
+          description: OK
+          content: 
+            text/plain:
+              schema:
+                type: string
+              example: Hello
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          format: int64
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        - timestamp: 1564913610
+          status: 401
+          error: 'Not Found'
+          message: 'No message available'
+          path: '/api/v1/users/99245040-f25d-4c6b-af37-6c0477bfd5d1'
+
+  responses:
+    GenericError:
+      description: An error occured.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

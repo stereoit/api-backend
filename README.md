@@ -40,3 +40,15 @@ Register and list all users
     ]
     }
 ```
+
+## Development
+
+### Rest API
+
+Run UI for provided openapi specification:
+
+    $ docker run --rm -d --name swagger-ui -p 8888:8000 -v /path/to/code/api/:/docs shotat/swagger-ui-watcher -- /docs/openapi.yaml
+    $ xdg-open http://localhost:8888
+
+Then you can [browse](http://localhost:8888) the documentation.
+
