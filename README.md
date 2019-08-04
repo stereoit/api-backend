@@ -9,7 +9,10 @@ At this moment I am focusing to learn the concepts, have User model available wi
 ```
 # npm install --unsafe-perm -g grpcc
 $ make protoc
-$ echo "PORT=8000" > .env
+$ cat << EOF > .env
+REST_PORT=8000 
+GRPC_PORT=8001
+EOF
 ```
 
 

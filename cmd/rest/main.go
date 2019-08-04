@@ -7,10 +7,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
+
+	"github.com/stereoit/eventival/pkg/user/registry"
 
 	"github.com/joho/godotenv"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
@@ -18,13 +22,29 @@ func main() {
 		log.Println("no .env file found")
 	}
 
-	port := os.Getenv("PORT")
+	port := os.Getenv("REST_PORT")
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	ctn, err := registry.NewContainer()
+	if err != nil {
+		log.Fatalf("failed to build container: %v", err)
+	}
+
 	r := chi.NewRouter()
+	// A good base middleware stack
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	// Set a timeout value on the request context (ctx), that will signal
+	// through ctx.Done() that the request has timed out and further
+	// processing should be stopped.
+	r.Use(middleware.Timeout(60 * time.Second))
+
 	r.Get("/hello", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
