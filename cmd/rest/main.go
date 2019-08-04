@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/stereoit/eventival/pkg/user/interface/rest"
 	"github.com/stereoit/eventival/pkg/user/registry"
 
 	"github.com/joho/godotenv"
@@ -48,6 +49,9 @@ func main() {
 	r.Get("/hello", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
+
+	rest.Apply("/users", r, ctn)
+
 	server := http.Server{
 		Handler: r,
 	}

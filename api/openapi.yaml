@@ -24,6 +24,21 @@ paths:
                 type: string
               example: Hello
 
+  /users:
+    description: >
+      This resource represents collection of users.
+
+    get:
+      operationId: getAllUsers
+      summary: Fetch all users without any pagination
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
 components:
   schemas:
     Error:
@@ -46,6 +61,32 @@ components:
           error: 'Not Found'
           message: 'No message available'
           path: '/api/v1/users/99245040-f25d-4c6b-af37-6c0477bfd5d1'
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the user in UUIDv4 format
+        email:
+          type: string
+          description: User's primary email address
+      example:
+        id: "cceb464d-b689-11e9-872d-1c3947113383"
+        email: "user1@example.com"
+
+    UserListResponse:
+      type: array
+      minItems: 0
+      items:
+        $ref: '#/components/schemas/UserResponse'
+      example:
+        - id: "cceb464d-b689-11e9-872d-1c3947113383"
+          email: "user1@example.com"
+        - id: "bc554f60-761e-482b-8f20-d56dc5c01951"
+          email: "user2@example.com"
+
+        
 
   responses:
     GenericError:
