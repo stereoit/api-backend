@@ -9,8 +9,9 @@ import (
 
 // UserUsecase defines interface for all user usecases
 type UserUsecase interface {
-	ListUser() ([]*User, error)
-	RegisterUser(email string) error
+	ListAllUsers() ([]*User, error)
+	RegisterUser(email string) (*User, error)
+	FindByID(id string) (*User, error)
 }
 
 type userUsecase struct {
@@ -26,27 +27,36 @@ func NewUserUsecase(repo repository.UserRepository, service service.UserService)
 	}
 }
 
-func (u *userUsecase) ListUser() ([]*User, error) {
+func (u *userUsecase) ListAllUsers() ([]*User, error) {
 	users, err := u.repo.FindAll()
 	if err != nil {
 		return nil, err
 	}
-	return toUser(users), nil
+	return toUserList(users), nil
 }
 
-func (u *userUsecase) RegisterUser(email string) error {
+func (u *userUsecase) FindByID(id string) (*User, error) {
+	user, err := u.repo.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return toUser(user), nil
+}
+
+func (u *userUsecase) RegisterUser(email string) (*User, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := u.service.Duplicated(email); err != nil {
-		return err
+		return nil, err
 	}
 	user := model.NewUser(uid.String(), email)
 	if err := u.repo.Save(user); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return toUser(user), nil
 }
 
 // User type defines exported user
@@ -57,15 +67,19 @@ type User struct {
 	LastName  string
 }
 
-func toUser(users []*model.User) []*User {
+func toUser(user *model.User) *User {
+	return &User{
+		ID:        user.GetID(),
+		Email:     user.GetEmail(),
+		FirstName: user.GetFirstName(),
+		LastName:  user.GetLastName(),
+	}
+}
+
+func toUserList(users []*model.User) []*User {
 	res := make([]*User, len(users))
 	for i, user := range users {
-		res[i] = &User{
-			ID:        user.GetID(),
-			Email:     user.GetEmail(),
-			FirstName: user.GetFirstName(),
-			LastName:  user.GetLastName(),
-		}
+		res[i] = toUser(user)
 	}
 	return res
 }

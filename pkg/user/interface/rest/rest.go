@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/stereoit/eventival/pkg/user/registry"
@@ -8,6 +9,7 @@ import (
 	"github.com/stereoit/eventival/pkg/user/usecase"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/render"
 )
 
 // Apply adds this resource to the given router
@@ -34,17 +36,39 @@ func NewUserService(userUsecase usecase.UserUsecase) UserService {
 
 func (s *userService) Routes() chi.Router {
 	r := chi.NewRouter()
-	r.Get("/", s.list)
+	r.Get("/", s.listAllUsers)
+	r.Post("/", s.registerUser)
 
 	return r
 }
 
-func (s *userService) list(w http.ResponseWriter, r *http.Request) {
-	users, err := s.userUsecase.ListUser()
+func (s *userService) listAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := s.userUsecase.ListAllUsers()
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
-	for _, user := range users {
-		w.Write([]byte(user.Email))
+
+	if err := render.RenderList(w, r, NewUsersListResponse(toUserList(users))); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
 	}
+}
+
+func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
+	userRequest := &UserRequest{}
+
+	if err := render.Bind(r, userRequest); err != nil {
+		w.Write([]byte(fmt.Sprintf("%v", err)))
+		return
+	}
+
+	createdUser, err := s.userUsecase.RegisterUser(userRequest.Email)
+	if err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	render.Status(r, http.StatusCreated)
+	render.Render(w, r, NewUserResponse(toUser(createdUser)))
 }
