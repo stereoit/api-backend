@@ -46,6 +46,18 @@ func (r *userRepository) FindByEmail(email string) (*model.User, error) {
 	return nil, nil
 }
 
+func (r *userRepository) FindByID(id string) (*model.User, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for _, user := range r.users {
+		if user.ID == id {
+			return model.NewUser(user.ID, user.Email), nil
+		}
+	}
+	return nil, nil
+}
+
 func (r *userRepository) Save(user *model.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()

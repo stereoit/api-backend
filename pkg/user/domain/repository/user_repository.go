@@ -6,5 +6,6 @@ import "github.com/stereoit/eventival/pkg/user/domain/model"
 type UserRepository interface {
 	FindAll() ([]*model.User, error)
 	FindByEmail(email string) (*model.User, error)
+	FindByID(id string) (*model.User, error)
 	Save(user *model.User) error
 }

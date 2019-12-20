@@ -28,7 +28,7 @@ func TestUserRepository_FindAll(t *testing.T) {
 		t.Errorf("Users are not empty")
 	}
 
-	r.Save(model.NewUser("1", "email", "firstName", "lastName"))
+	r.Save(model.NewUser("1", "email"))
 	users, err = r.FindAll()
 	if err != nil {
 		t.Fatalf("Error obtaining all users = %v", err)
@@ -42,7 +42,7 @@ func TestUserRepository_FindAll(t *testing.T) {
 func TestUserRepository_FindByEmail(t *testing.T) {
 	assert := assert.New(t)
 	r := storage.NewUserRepository()
-	testUser := model.NewUser("1", "email", "firstName", "lastName")
+	testUser := model.NewUser("1", "email")
 	r.Save(testUser)
 
 	got, err := r.FindByEmail("email")
@@ -55,9 +55,25 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	assert.Nil(got, "FindByEmail() should return nil for non existing email")
 }
 
+func TestUserRepository_FindByID(t *testing.T) {
+	assert := assert.New(t)
+	r := storage.NewUserRepository()
+	testUser := model.NewUser("1", "email")
+	r.Save(testUser)
+
+	got, err := r.FindByID("1")
+	if err != nil {
+		t.Errorf("UserRepository.FindByID() error =%v", err)
+	}
+	assert.Equal(got, testUser)
+
+	got, _ = r.FindByID("no-such-id")
+	assert.Nil(got, "FindByID() should return nil for non existion ID")
+}
+
 func TestUserRepository_Save(t *testing.T) {
 	r := storage.NewUserRepository()
-	if err := r.Save(model.NewUser("1", "email", "firstName", "lastName")); err != nil {
+	if err := r.Save(model.NewUser("1", "email")); err != nil {
 		t.Errorf("UserRepository.Save() error =%v", err)
 	}
 }
