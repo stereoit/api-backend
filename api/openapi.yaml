@@ -38,6 +38,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserListResponse"
+                
+    post:
+      operationId: registerNewUser
+      summary: Register a new user
+      requestBody:
+        description: Newly created user
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '409':
+          description: Duplicate user
+
 
 components:
   schemas:
@@ -61,6 +80,15 @@ components:
           error: 'Not Found'
           message: 'No message available'
           path: '/api/v1/users/99245040-f25d-4c6b-af37-6c0477bfd5d1'
+
+    UserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User's primary email address
+      example:
+        email: user@example.com
 
     UserResponse:
       type: object
