@@ -25,13 +25,13 @@ func NewUserService(userUsecase usecase.UserUsecase) UserService {
 }
 
 func (s *userService) ListUser(ctx context.Context, in *protocol.ListUserRequestType) (*protocol.ListUserResponseType, error) {
-	users, err := s.userUsecase.ListUser()
+	users, err := s.userUsecase.ListAllUsers()
 	if err != nil {
 		return nil, err
 	}
 
 	res := &protocol.ListUserResponseType{
-		Users: toUser(users),
+		Users: toProtocolUserList(users),
 	}
 
 	return res, nil
@@ -39,13 +39,25 @@ func (s *userService) ListUser(ctx context.Context, in *protocol.ListUserRequest
 }
 
 func (s *userService) RegisterUser(ctx context.Context, in *protocol.RegisterUserRequestType) (*protocol.RegisterUserResponseType, error) {
-	if err := s.userUsecase.RegisterUser(in.GetEmail()); err != nil {
+
+	newUserID, err := s.userUsecase.RegisterUser(in.GetEmail())
+	if err != nil {
 		return &protocol.RegisterUserResponseType{}, err
 	}
-	return &protocol.RegisterUserResponseType{}, nil
+
+	return &protocol.RegisterUserResponseType{
+		Id: newUserID,
+	}, nil
 }
 
-func toUser(users []*usecase.User) []*protocol.User {
+func toProtocolUser(user *usecase.User) *protocol.User {
+	return &protocol.User{
+		Id:    user.ID,
+		Email: user.Email,
+	}
+}
+
+func toProtocolUserList(users []*usecase.User) []*protocol.User {
 	res := make([]*protocol.User, len(users))
 	for i, user := range users {
 		res[i] = &protocol.User{

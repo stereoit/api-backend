@@ -25,5 +25,6 @@ message RegisterUserRequestType {
 }
 
 message RegisterUserResponseType {
+    string id = 1;
 
 }

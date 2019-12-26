@@ -10,7 +10,7 @@ import (
 // UserUsecase defines interface for all user usecases
 type UserUsecase interface {
 	ListAllUsers() ([]*User, error)
-	RegisterUser(email string) (*User, error)
+	RegisterUser(email string) (string, error)
 	FindByID(id string) (*User, error)
 }
 
@@ -44,19 +44,19 @@ func (u *userUsecase) FindByID(id string) (*User, error) {
 	return toUser(user), nil
 }
 
-func (u *userUsecase) RegisterUser(email string) (*User, error) {
+func (u *userUsecase) RegisterUser(email string) (string, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	if err := u.service.Duplicated(email); err != nil {
-		return nil, err
+		return "", err
 	}
 	user := model.NewUser(uid.String(), email)
 	if err := u.repo.Save(user); err != nil {
-		return nil, err
+		return "", err
 	}
-	return toUser(user), nil
+	return user.GetID(), nil
 }
 
 // User type defines exported user

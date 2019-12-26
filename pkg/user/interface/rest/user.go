@@ -54,6 +54,23 @@ func NewUserResponse(user *User) *UserResponse {
 	return resp
 }
 
+// RegisterUserResponse returns just an ID of the new user
+type RegisterUserResponse struct {
+	ID string `json:"id"`
+}
+
+// NewRegisterUserResponse returns ID
+func NewRegisterUserResponse(id string) *RegisterUserResponse {
+	return &RegisterUserResponse{
+		ID: id,
+	}
+}
+
+// Render implements Renderer interface, not sure if needed for empty implementation
+func (u *RegisterUserResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
 // NewUsersListResponse something
 func NewUsersListResponse(users []*User) []render.Renderer {
 	list := []render.Renderer{}

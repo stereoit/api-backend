@@ -62,7 +62,7 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdUser, err := s.userUsecase.RegisterUser(userRequest.Email)
+	newUserID, err := s.userUsecase.RegisterUser(userRequest.Email)
 	if err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		render.Render(w, r, ErrRender(err))
@@ -70,5 +70,5 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Status(r, http.StatusCreated)
-	render.Render(w, r, NewUserResponse(toUser(createdUser)))
+	render.Render(w, r, NewRegisterUserResponse(newUserID))
 }
