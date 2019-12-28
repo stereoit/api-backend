@@ -32,7 +32,7 @@ func Test_NewUser(t *testing.T) {
 	assert.Equal("", got, "last name should be empty")
 
 	user.SetLastName(testLastName)
-	got = user.GetFirstName()
+	got = user.GetLastName()
 	assert.Equal(testLastName, got, "last name should match")
 
 }
