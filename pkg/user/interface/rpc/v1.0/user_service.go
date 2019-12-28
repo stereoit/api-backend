@@ -52,18 +52,17 @@ func (s *userService) RegisterUser(ctx context.Context, in *protocol.RegisterUse
 
 func toProtocolUser(user *usecase.User) *protocol.User {
 	return &protocol.User{
-		Id:    user.ID,
-		Email: user.Email,
+		Id:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 	}
 }
 
 func toProtocolUserList(users []*usecase.User) []*protocol.User {
 	res := make([]*protocol.User, len(users))
 	for i, user := range users {
-		res[i] = &protocol.User{
-			Id:    user.ID,
-			Email: user.Email,
-		}
+		res[i] = toProtocolUser(user)
 	}
 	return res
 }

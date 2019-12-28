@@ -10,6 +10,8 @@ service UserService {
 message User {
     string id = 1;
     string email = 2;
+    string firstName = 3;
+    string lastName = 4;
 }
 
 message ListUserRequestType {
