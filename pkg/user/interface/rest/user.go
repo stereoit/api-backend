@@ -10,8 +10,10 @@ import (
 
 // User represents single user
 type User struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
+	ID        string `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 // UserRequest represent incoming user object
@@ -83,8 +85,10 @@ func NewUsersListResponse(users []*User) []render.Renderer {
 // converts between entities
 func toUser(user *usecase.User) *User {
 	return &User{
-		ID:    user.ID,
-		Email: user.Email,
+		ID:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 	}
 }
 
