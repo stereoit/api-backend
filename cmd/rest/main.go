@@ -9,8 +9,10 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/stereoit/eventival/internal/app"
+
 	userRestService "github.com/stereoit/eventival/pkg/user/interface/rest"
-	"github.com/stereoit/eventival/pkg/user/registry"
+	userRegistry "github.com/stereoit/eventival/pkg/user/registry"
 
 	"github.com/joho/godotenv"
 
@@ -23,13 +25,20 @@ func main() {
 		log.Println("no .env file found")
 	}
 
-	port := os.Getenv("REST_PORT")
+	port := app.GetEnv("REST_PORT", "8000")
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	ctn, err := registry.NewContainer()
+	// get the storage implementation
+	userStorage, err := app.GetUserRepository()
+	if err != nil {
+		log.Fatalf("failed to get user repository: %v", err)
+	}
+
+	// setup user dependency injection
+	userDIContainer, err := userRegistry.NewContainer(userStorage)
 	if err != nil {
 		log.Fatalf("failed to build container: %v", err)
 	}
@@ -50,7 +59,7 @@ func main() {
 		w.Write([]byte("welcome"))
 	})
 
-	userRestService.Apply("/users", r, ctn)
+	userRestService.Apply("/users", r, userDIContainer)
 
 	server := http.Server{
 		Handler: r,

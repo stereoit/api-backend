@@ -24,7 +24,7 @@ type UserRepositoryOpts struct {
 	Collection    string
 }
 
-// User struct maps the model.User
+// User struct maps the domain entity model.User into storage model
 type User struct {
 	ID        string `bson:"_id"`
 	Email     string `bson:"email"`
@@ -39,7 +39,7 @@ type userRepository struct {
 	collection    string
 }
 
-// NewUserRepository returns instance of MongoDB repository
+// NewUserRepository returns instance of User MongoDB repository
 func NewUserRepository(opts *UserRepositoryOpts) (repository.UserRepository, error) {
 	client, err := getClient(opts.ConnectionURI)
 	if err != nil {
@@ -101,7 +101,6 @@ func (r *userRepository) FindByEmail(email string) (*model.User, error) {
 		Key:   "email",
 		Value: email,
 	}}
-	// log.Println(findFilter)
 	collection := r.Client.Database(r.database).Collection(r.collection)
 
 	var result User
