@@ -2,6 +2,8 @@
 include .env
 export $(shell sed 's/=.*//' .env)
 
+.PHONY: protoc grpcc rest run
+
 run:
 	go run cmd/grpcserver/main.go
 
