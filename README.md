@@ -1,8 +1,8 @@
 # Eventival backend
 
-This is experimental project where I learn about hexagonal architecture.
+This is experimental project where I learn about clean architecture.
 
-At this moment I am focusing to learn the concepts, have User model available with all basic operations (list, add..) expose via gRPC GW. Optionally through REST as well.
+At this moment I am focusing to learn the concepts, have User model available with all basic operations (list, add..) expose via gRPC GW and REST server as well.
 
 ## Prerequisities
 
@@ -18,9 +18,9 @@ EOF
 
 ## Running
 
-Start a server
+Start a GRPC server
 
-`$ make run` 
+`$ make grpc` 
 
 Then in another terminal
 
@@ -44,7 +44,29 @@ Register and list all users
     }
 ```
 
+## Container
+
+[Podman](https://podman.io/getting-started/installation) is used instead of Docker. If you are using docker, just substitute the `podman` for `docker` (they are options compatible).
+
+Build image
+
+`$ make docker`
+
+Run image:
+
+`$ make run-docker`
+
+
 ## Development
+
+When running `make test` it is expected the mongo is up and running at localhost, on consequent runs, it fails due to non empty collection. You can solve this by:
+
+```
+$ mongo
+> use eventival-test
+> db.users.drop()
+> exit
+```
 
 ### Rest API
 
