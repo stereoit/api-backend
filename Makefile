@@ -37,4 +37,4 @@ protoc:
 	protoc --proto_path=. --go_out=plugins=grpc:./ pkg/user/interface/rpc/v1.0/protocol/*.proto
 
 mocks: 
-	mockery -dir pkg/user/domain/repository -all -output pkg/mocks
+	mockery -dir pkg/user/domain -recursive -all -output pkg/mocks
