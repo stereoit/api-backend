@@ -32,8 +32,8 @@ func GetUserRepository() (repository.UserRepository, error) {
 		})
 		if err != nil {
 			log.Fatalf("Failed to initialize storage: %v\n", err)
+			return nil, err
 		}
-		log.Println("Storage set to mongo")
 	default:
 		userRepository = memory.NewUserRepository()
 	}
