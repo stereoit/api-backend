@@ -6,6 +6,7 @@ import (
 	"github.com/stereoit/eventival/pkg/user/domain/repository"
 )
 
+// UserService interface
 type UserService interface {
 	Duplicated(string) error
 }

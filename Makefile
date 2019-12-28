@@ -5,7 +5,7 @@ export $(shell sed 's/=.*//' .env)
 REST_BINARY=rest-server
 GRPC_BINARY=grpc-server
 
-.PHONY: grpc rest build test clean docker run-docker grpcc protoc
+.PHONY: grpc rest build test clean docker run-docker grpcc protoc mocks
 
 grpc:
 	go run cmd/grpcserver/main.go
@@ -35,3 +35,6 @@ grpcc:
 
 protoc:
 	protoc --proto_path=. --go_out=plugins=grpc:./ pkg/user/interface/rpc/v1.0/protocol/*.proto
+
+mocks: 
+	mockery -dir pkg/user/domain/repository -all -output pkg/mocks
