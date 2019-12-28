@@ -31,7 +31,17 @@ func (u *User) GetFirstName() string {
 	return u.firstName
 }
 
+// SetFirstName sets the first name of the user
+func (u *User) SetFirstName(firstName string) {
+	u.firstName = firstName
+}
+
 // GetLastName returns the last name of the user
 func (u *User) GetLastName() string {
 	return u.lastName
+}
+
+// SetLastName sets the last name of the user
+func (u *User) SetLastName(lastName string) {
+	u.lastName = lastName
 }
