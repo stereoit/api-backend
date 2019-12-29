@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_NewUser(t *testing.T) {
@@ -35,4 +36,26 @@ func Test_NewUser(t *testing.T) {
 	got = user.GetLastName()
 	assert.Equal(testLastName, got, "last name should match")
 
+}
+
+func Test_Validate(t *testing.T) {
+	assert := assert.New(t)
+	//
+	testUser := &User{}
+	err := testUser.Validate()
+	assert.NotNil(err, "id and email cannot be blank")
+
+	testUser = &User{
+		id:    "8e492e66-9af8-48ab-a22d-61cbaaf333fa",
+		email: "bad-email",
+	}
+	err = testUser.Validate()
+	assert.NotNil(err, "email must be valid address")
+
+	testUser = &User{
+		id:    "8e492e66-9af8-48ab-a22d-61cbaaf333fa",
+		email: "user@example.com",
+	}
+	err = testUser.Validate()
+	assert.Nil(err, "correct user should validate")
 }

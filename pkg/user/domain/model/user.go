@@ -1,5 +1,13 @@
 package model
 
+import (
+	"errors"
+	"fmt"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+)
+
 // User represents single user
 type User struct {
 	id        string
@@ -44,4 +52,18 @@ func (u *User) GetLastName() string {
 // SetLastName sets the last name of the user
 func (u *User) SetLastName(lastName string) {
 	u.lastName = lastName
+}
+
+// Validate performs validation of all business rules
+func (u *User) Validate() error {
+
+	err := validation.Errors{
+		"id":    validation.Validate(u.id, validation.Required, validation.Length(1, 50)),
+		"email": validation.Validate(u.email, validation.Required, is.Email),
+	}.Filter()
+
+	if err != nil {
+		return errors.New(fmt.Sprint(err))
+	}
+	return nil
 }
