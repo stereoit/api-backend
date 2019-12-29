@@ -12,6 +12,7 @@ type UserUsecase interface {
 	ListAllUsers() ([]*User, error)
 	RegisterUser(email string) (string, error)
 	FindByID(id string) (*User, error)
+	UpdateUser(*User) error
 }
 
 type userUsecase struct {
@@ -32,7 +33,7 @@ func (u *userUsecase) ListAllUsers() ([]*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return toUserList(users), nil
+	return toUsecaseUserList(users), nil
 }
 
 func (u *userUsecase) FindByID(id string) (*User, error) {
@@ -41,7 +42,7 @@ func (u *userUsecase) FindByID(id string) (*User, error) {
 		return nil, err
 	}
 
-	return toUser(user), nil
+	return toUsecaseUser(user), nil
 }
 
 func (u *userUsecase) RegisterUser(email string) (string, error) {
@@ -59,6 +60,22 @@ func (u *userUsecase) RegisterUser(email string) (string, error) {
 	return user.GetID(), nil
 }
 
+// UpdateUser updates the user entity with validation
+func (u *userUsecase) UpdateUser(user *User) error {
+	entity := toUser(user)
+
+	if err := entity.Validate(); err != nil {
+		// log.Printf("Error: %v\n", err)
+		return err
+	}
+
+	if err := u.repo.Save(toUser(user)); err != nil {
+		// log.Printf("Error: %v\n", err)
+		return err
+	}
+	return nil
+}
+
 // User type defines exported user
 type User struct {
 	ID        string
@@ -67,7 +84,15 @@ type User struct {
 	LastName  string
 }
 
-func toUser(user *model.User) *User {
+func toUser(user *User) *model.User {
+	entity := model.NewUser(user.ID, user.Email)
+	entity.SetFirstName(user.FirstName)
+	entity.SetLastName(user.LastName)
+
+	return entity
+}
+
+func toUsecaseUser(user *model.User) *User {
 	return &User{
 		ID:        user.GetID(),
 		Email:     user.GetEmail(),
@@ -76,10 +101,10 @@ func toUser(user *model.User) *User {
 	}
 }
 
-func toUserList(users []*model.User) []*User {
+func toUsecaseUserList(users []*model.User) []*User {
 	res := make([]*User, len(users))
 	for i, user := range users {
-		res[i] = toUser(user)
+		res[i] = toUsecaseUser(user)
 	}
 	return res
 }

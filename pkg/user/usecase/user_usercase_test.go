@@ -80,9 +80,39 @@ func Test_RegisterUser(t *testing.T) {
 
 	// handle success of registration
 	mockService.On("Duplicated", email).Return(nil).Once()
-	mockRepo.On("Save", mock.Anything).Return(nil)
+	mockRepo.On("Save", mock.Anything).Return(nil).Once()
 	id, _ := usecase.RegisterUser(email)
 	assert.NotNil(id, "Registeruser should return ID of new user")
 	mockService.AssertExpectations(t)
+	mockRepo.AssertExpectations(t)
+}
+
+func Test_UpdateUser(t *testing.T) {
+	assert := assert.New(t)
+	mockRepo := &mocks.UserRepository{}
+	mockService := &mocks.UserService{}
+	usecase := NewUserUsecase(mockRepo, mockService)
+	user := &User{
+		ID: "8e492e66-9af8-48ab-a22d-61cbaaf333fa",
+		// Email:     "user@example.com",
+		FirstName: "Václav",
+		LastName:  "Havel",
+	}
+
+	// test non valid user
+	err := usecase.UpdateUser(user)
+	assert.NotNil(err, "non valid user should have error")
+
+	// test repository error
+	user.Email = "user@example.com"
+	mockRepo.On("Save", mock.Anything).Return(errors.New("repo error")).Once()
+	err = usecase.UpdateUser(user)
+	assert.NotNil(err, "handling repository error")
+	mockRepo.AssertExpectations(t)
+
+	// test valid user
+	mockRepo.On("Save", mock.Anything).Return(nil).Once()
+	err = usecase.UpdateUser(user)
+	assert.Nil(err, "updating user should be OK")
 	mockRepo.AssertExpectations(t)
 }
