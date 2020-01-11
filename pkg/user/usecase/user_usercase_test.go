@@ -57,7 +57,7 @@ func Test_FindByID(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 }
 
-func Test_RegisterUser(t *testing.T) {
+func Test_RegisterUser_Duplicated(t *testing.T) {
 	assert := assert.New(t)
 	email := "user@example.com"
 	mockRepo := &mocks.UserRepository{}
@@ -70,13 +70,30 @@ func Test_RegisterUser(t *testing.T) {
 	assert.NotNil(err, "service Duplicated might throw error")
 	mockService.AssertExpectations(t)
 
+}
+
+func Test_RegisterUser_RepoError(t *testing.T) {
+	assert := assert.New(t)
+	email := "user@example.com"
+	mockRepo := &mocks.UserRepository{}
+	mockService := &mocks.UserService{}
+	usecase := NewUserUsecase(mockRepo, mockService)
+
 	// handle error of repo
 	mockService.On("Duplicated", email).Return(nil).Once()
 	mockRepo.On("Save", mock.Anything).Return(errors.New("repo error"))
-	_, err = usecase.RegisterUser(email)
+	_, err := usecase.RegisterUser(email)
 	assert.NotNil(err, "repo Save might throw error")
 	mockService.AssertExpectations(t)
 	mockRepo.AssertExpectations(t)
+}
+
+func Test_RegisterUser(t *testing.T) {
+	assert := assert.New(t)
+	email := "user@example.com"
+	mockRepo := &mocks.UserRepository{}
+	mockService := &mocks.UserService{}
+	usecase := NewUserUsecase(mockRepo, mockService)
 
 	// handle success of registration
 	mockService.On("Duplicated", email).Return(nil).Once()
