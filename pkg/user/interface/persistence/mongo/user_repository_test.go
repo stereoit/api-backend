@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stereoit/eventival/internal/rand"
 	"github.com/stereoit/eventival/pkg/user/domain/repository"
 
 	"github.com/google/uuid"
@@ -16,12 +17,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var testDatabase = "eventival-test-" + rand.String(10)
+
 func createRepository() repository.UserRepository {
 	const MONGO_CONNECTION = "mongodb://localhost:27017"
 	connection := getenv("MONGODB_URI", MONGO_CONNECTION)
 	opts := &storage.UserRepositoryOpts{
 		ConnectionURI: connection,
-		Database:      "eventival-test",
+		Database:      testDatabase,
 		Collection:    "users",
 	}
 	repo, err := storage.NewUserRepository(opts)
