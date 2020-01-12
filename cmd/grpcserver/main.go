@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/stereoit/eventival/internal/app"
 	"github.com/stereoit/eventival/pkg/user/interface/rpc"
 
 	"google.golang.org/grpc"
@@ -21,12 +20,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	// get the storage implementation
-	userStorage, err := app.GetUserRepository()
-	if err != nil {
-		log.Fatalf("failed to get user repository: %v", err)
-	}
-	ctn, err := registry.NewContainer(userStorage)
+	ctn, err := registry.NewContainer()
 	if err != nil {
 		log.Fatalf("failed to build container: %v", err)
 	}

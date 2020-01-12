@@ -31,14 +31,8 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	// get the storage implementation
-	userStorage, err := app.GetUserRepository()
-	if err != nil {
-		log.Fatalf("failed to get user repository: %v", err)
-	}
-
 	// setup user dependency injection
-	userDIContainer, err := userRegistry.NewContainer(userStorage)
+	userDIContainer, err := userRegistry.NewContainer()
 	if err != nil {
 		log.Fatalf("failed to build container: %v", err)
 	}
