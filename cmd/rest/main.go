@@ -9,8 +9,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/stereoit/eventival/internal/app"
-
+	"github.com/stereoit/eventival/internal/env"
 	userRestService "github.com/stereoit/eventival/pkg/user/interface/rest"
 	userRegistry "github.com/stereoit/eventival/pkg/user/registry"
 
@@ -25,7 +24,7 @@ func main() {
 		log.Println("no .env file found")
 	}
 
-	port := app.GetEnv("REST_PORT", "8000")
+	port := env.Get("REST_PORT", "8000")
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
