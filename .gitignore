@@ -1,2 +1,6 @@
 .env
 .vscode
+
+# produced binaries
+grpc-server
+rest-server
