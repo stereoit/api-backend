@@ -57,16 +57,16 @@ Run image:
 `$ make run-docker`
 
 
-## Development
+## Testing
 
-When running `make test` it is expected the mongo is up and running at localhost, on consequent runs, it fails due to non empty collection. You can solve this by:
+For unit tests run:
 
-```
-$ mongo
-> use eventival-test
-> db.users.drop()
-> exit
-```
+    $ make test
+
+For integration tests:
+
+    $ make integration-test
+
 
 ### Rest API
 

@@ -22,7 +22,10 @@ clean:
 	@rm -f ${GRPC_BINARY}
 
 test:
-	go test -v -cover -covermode=atomic ./...
+	go test -cover -covermode=atomic ./...
+
+integration-test:
+	go test -count=1 -tags=integration ./...
 
 docker:
 	podman build -t eventival-backend .

@@ -10,7 +10,7 @@ import (
 	"github.com/stereoit/eventival/pkg/user/domain/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+	mongodb "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
@@ -33,7 +33,7 @@ type User struct {
 }
 
 type userRepository struct {
-	*mongo.Client
+	*mongodb.Client
 	connectionURI string
 	database      string
 	collection    string
@@ -46,7 +46,10 @@ func NewUserRepository(opts *UserRepositoryOpts) (repository.UserRepository, err
 		return nil, err
 	}
 
-	err = client.Ping(context.Background(), readpref.Primary())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
 		log.Fatal("Couldn't connect to the database", err)
 		return nil, err
@@ -60,9 +63,9 @@ func NewUserRepository(opts *UserRepositoryOpts) (repository.UserRepository, err
 	}, nil
 }
 
-func getClient(connection string) (*mongo.Client, error) {
+func getClient(connection string) (*mongodb.Client, error) {
 	clientOptions := options.Client().ApplyURI(connection)
-	client, err := mongo.NewClient(clientOptions)
+	client, err := mongodb.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +108,7 @@ func (r *userRepository) FindByEmail(email string) (*model.User, error) {
 
 	var result User
 	err := collection.FindOne(context.TODO(), findFilter).Decode(&result)
-	if err == mongo.ErrNoDocuments {
+	if err == mongodb.ErrNoDocuments {
 		return nil, nil
 	}
 
@@ -124,7 +127,7 @@ func (r *userRepository) FindByID(id string) (*model.User, error) {
 	var result User
 
 	err := collection.FindOne(context.TODO(), findFilter).Decode(&result)
-	if err == mongo.ErrNoDocuments {
+	if err == mongodb.ErrNoDocuments {
 		return nil, nil
 	}
 	if err != nil {

@@ -1,6 +1,9 @@
-package mongo_test
+// +build integration
+
+package mongo
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,24 +13,33 @@ import (
 	"github.com/stereoit/eventival/pkg/user/domain/repository"
 
 	"github.com/google/uuid"
-	storage "github.com/stereoit/eventival/pkg/user/interface/persistence/mongo"
 
 	"github.com/stereoit/eventival/pkg/user/domain/model"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var testDatabase = "eventival-test-" + rand.String(10)
+const MONGO_CONNECTION_URI = "mongodb://localhost:27017"
 
-func createRepository() repository.UserRepository {
-	const MONGO_CONNECTION = "mongodb://localhost:27017"
-	connection := getenv("MONGODB_URI", MONGO_CONNECTION)
-	opts := &storage.UserRepositoryOpts{
-		ConnectionURI: connection,
+var _repo repository.UserRepository
+
+func getRepository() repository.UserRepository {
+	if _repo == nil {
+		uri := getenv("MONGODB_URI", MONGO_CONNECTION_URI)
+		_repo = createRepository(uri)
+	}
+	return _repo
+}
+
+func createRepository(connectionURI string) repository.UserRepository {
+	var testDatabase = "eventival-test-" + rand.String(10)
+
+	opts := &UserRepositoryOpts{
+		ConnectionURI: connectionURI,
 		Database:      testDatabase,
 		Collection:    "users",
 	}
-	repo, err := storage.NewUserRepository(opts)
+	repo, err := NewUserRepository(opts)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,24 +58,31 @@ func getenv(key, fallback string) string {
 // this is temporary solution as we should mock the
 // mongo db response ideally
 func TestMain(m *testing.M) {
-	// fmt.Println("Running before all tests")
-	// repo := createRepository()
+	connectionURI := flag.String("mongo", MONGO_CONNECTION_URI, "mongo connection string")
+	flag.Parse()
+	fmt.Printf("connectionURI=%s\n", *connectionURI)
+	fmt.Println("Running before all tests")
+	_repo = createRepository(*connectionURI)
 	code := m.Run()
 	// fmt.Println("Running after all tests")
 	os.Exit(code)
 }
 
+func Test_One(t *testing.T) {
+	fmt.Println("One test passes")
+}
+
 func TestUserRepository_New(t *testing.T) {
 	assert := assert.New(t)
 
-	repository := createRepository()
+	repository := getRepository()
 
 	assert.NotNil(repository)
 }
 
 func TestUserRepository_FindAll(t *testing.T) {
 	assert := assert.New(t)
-	r := createRepository()
+	r := getRepository()
 
 	users, err := r.FindAll()
 	assert.Nil(err, "Error obtaining all users = %v", err)
@@ -87,7 +106,7 @@ func TestUserRepository_FindAll(t *testing.T) {
 
 func TestUserRepository_FindByEmail(t *testing.T) {
 	assert := assert.New(t)
-	r := createRepository()
+	r := getRepository()
 
 	uid, _ := uuid.NewUUID()
 	testUser := model.NewUser(uid.String(), fmt.Sprintf("%s@example.com", uid.String()))
@@ -105,7 +124,7 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 
 func TestUserRepository_FindByID(t *testing.T) {
 	assert := assert.New(t)
-	r := createRepository()
+	r := getRepository()
 	testUser := model.NewUser("1", "email")
 	r.Save(testUser)
 
@@ -120,7 +139,7 @@ func TestUserRepository_FindByID(t *testing.T) {
 }
 
 func TestUserRepository_Save(t *testing.T) {
-	r := createRepository()
+	r := getRepository()
 
 	uid, err := uuid.NewUUID()
 	if err != nil {
