@@ -56,6 +56,15 @@ Run image:
 
 `$ make run-docker`
 
+Run complete app with mongo DB using docker-compose:
+
+
+`$ podman-compose -f docker/compose.yml up --build`
+
+or
+
+`$ make docker-compose`
+
 
 ## Testing
 

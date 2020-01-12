@@ -33,6 +33,9 @@ docker:
 run-docker:
 	podman run -it  -e REST_PORT=8000 -e STORAGE_BACKEND=MEMORY --rm -p 8000:8000 eventival-backend
 
+docker-compose:
+	podman-compose -f docker/compose.yml up
+
 grpcc:
 	grpcc --proto pkg/user/interface/rpc/v1.0/protocol/*.proto --address 127.0.0.1:${GRPC_PORT} -i
 
