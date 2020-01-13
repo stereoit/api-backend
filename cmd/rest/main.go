@@ -9,9 +9,10 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/sarulabs/di"
+	"github.com/stereoit/eventival/internal/config/services"
 	"github.com/stereoit/eventival/internal/env"
 	userRestService "github.com/stereoit/eventival/pkg/user/interface/rest"
-	userRegistry "github.com/stereoit/eventival/pkg/user/registry"
 
 	"github.com/joho/godotenv"
 
@@ -30,11 +31,21 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	// setup user dependency injection
-	userDIContainer, err := userRegistry.NewContainer()
+	// Create the app container.
+	// Do not forget to delete it at the end.
+	builder, err := di.NewBuilder()
 	if err != nil {
-		log.Fatalf("failed to build container: %v", err)
+		log.Fatal(err.Error())
 	}
+
+	// build DI container
+	err = builder.Add(services.New()...)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	app := builder.Build()
+	defer app.Delete()
 
 	r := chi.NewRouter()
 	// A good base middleware stack
@@ -52,7 +63,7 @@ func main() {
 		w.Write([]byte("welcome"))
 	})
 
-	userRestService.Apply("/users", r, userDIContainer)
+	userRestService.Apply("/users", r, app)
 
 	server := http.Server{
 		Handler: r,
