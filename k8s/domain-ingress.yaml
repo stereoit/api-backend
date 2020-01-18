@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api-eventival-stereoit-com
+spec:
+  rules:
+  - host: api.eventival.stereoit.com
+    http:
+      paths:
+      - backend:
+          serviceName: api
+          servicePort: 8080
+  tls:
+  - hosts:
+    - api.eventival.stereoit.com
+    secretName: testsecret-tls
