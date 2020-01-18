@@ -28,10 +28,10 @@ integration-test:
 	go test -count=1 -tags=integration ./...
 
 docker:
-	podman build -t eventival-backend .
+	podman build -t eventival-api .
 
 run-docker:
-	podman run -it  -e REST_PORT=8000 -e STORAGE_BACKEND=MEMORY --rm -p 8000:8000 eventival-backend
+	podman run -it  -e REST_PORT=8000 -e STORAGE_BACKEND=MEMORY --rm -p 8000:8000 eventival-api
 
 docker-compose:
 	podman-compose -f docker/compose.yml up
