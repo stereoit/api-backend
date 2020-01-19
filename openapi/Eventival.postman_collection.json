@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "922355cc-312c-4c31-91ec-1e245e33b82d",
+		"name": "Eventival",
+		"description": "Collection for managing the eventival project.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "ListAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}:{{port}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"smol.robert2@stereoit.com\",\n\t\"firstName\": \"Robert\",\n\t\"lastName\": \"Smol\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"users"
+							]
+						},
+						"description": "Create sample user"
+					},
+					"response": []
+				}
+			],
+			"description": "Everything related to the users resources"
+		}
+	],
+	"variable": [
+		{
+			"id": "ecb6baf0-2d87-461e-8022-37e6e19ff529",
+			"key": "BASE_URL",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
