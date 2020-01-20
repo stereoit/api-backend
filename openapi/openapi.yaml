@@ -30,7 +30,12 @@ paths:
 
     get:
       operationId: getAllUsers
-      summary: Fetch all users without any pagination
+      summary: Fetch all users with pagination
+      tags:
+        - User
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       responses:
         '200':
           description: OK
@@ -38,12 +43,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserListResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
                 
     post:
-      operationId: registerNewUser
-      summary: Register a new user
+      operationId: createNewUser
+      summary: Register a new user with all details
+      tags:
+        - User
       requestBody:
-        description: Newly created user
+        description: Request user
         required: true
         content: 
           application/json:
@@ -56,6 +69,64 @@ paths:
           description: Bad Request
         '409':
           description: Duplicate user
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{id}:
+    summary: Represents a user
+    description: >-
+      This resource represents an individual user in the system.
+      Each user is identified by a numeric `id`.
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The user ID
+    get:
+      operationId: getUserByID
+      summary: Get user details
+      tags:
+        - User
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Update the user with provided data
+      tags:
+        - User
+      responses:
+        '200':
+          description: User updated
+    delete:
+      operationId: deleteUser
+      summary: Delete specific user based on the ID provided
+      tags:
+        - User
+      responses:
+        '204':
+          description: User deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
 components:
@@ -63,23 +134,16 @@ components:
     Error:
       type: object
       properties:
-        timestamp:
-          type: number
-          format: int64
         status:
           type: integer
         error:
           type: string
         message:
           type: string
-        path:
-          type: string
       example:
-        - timestamp: 1564913610
-          status: 401
-          error: 'Not Found'
-          message: 'No message available'
-          path: '/api/v1/users/99245040-f25d-4c6b-af37-6c0477bfd5d1'
+        - status: 401
+          error: 'Not Authorized'
+          message: 'Please authorize to perform this operation.'
 
     UserRequest:
       type: object
@@ -87,8 +151,17 @@ components:
         email:
           type: string
           description: User's primary email address
+        firstName:
+          type: string
+          description: First name
+        lastName:
+          type: string
+          description: Last name
       example:
-        email: user@example.com
+        email: "john.doe@example.com"
+        firstName: John
+        lastName: Doe
+
 
     UserResponse:
       type: object
@@ -99,9 +172,17 @@ components:
         email:
           type: string
           description: User's primary email address
+        firstName:
+          type: string
+          description: First name
+        lastName:
+          type: string
+          description: Last name
       example:
         id: "cceb464d-b689-11e9-872d-1c3947113383"
-        email: "user1@example.com"
+        email: "john.doe@example.com"
+        firstName: John
+        lastName: Doe
 
     UserListResponse:
       type: array
@@ -114,7 +195,27 @@ components:
         - id: "bc554f60-761e-482b-8f20-d56dc5c01951"
           email: "user2@example.com"
 
-        
+  parameters:
+    offsetParam:  # <-- Arbitrary name for the definition that will be used to refer to it.
+                  # Not necessarily the same as the parameter name.
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The number of items to skip before starting to collect the result set.
+    limitParam:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 25
+      description: The numbers of items to return. 
 
   responses:
     GenericError:
