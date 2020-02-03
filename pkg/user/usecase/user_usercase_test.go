@@ -2,18 +2,21 @@ package usecase
 
 import (
 	"errors"
-	"github.com/stereoit/eventival/pkg/mocks"
+	"testing"
+
+	mocksRepo "github.com/stereoit/eventival/mocks/user/domain/repository"
+	mocksService "github.com/stereoit/eventival/mocks/user/domain/service"
+
 	"github.com/stereoit/eventival/pkg/user/domain/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func Test_NewUserUsecase(t *testing.T) {
 	assert := assert.New(t)
 
-	mockRepo := &mocks.UserRepository{}
-	mockService := &mocks.UserService{}
+	mockRepo := &mocksRepo.UserRepository{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 	assert.NotNil(usecase, "NewUserUsecase should return an instance")
 }
@@ -22,9 +25,9 @@ func Test_ListAllUsers(t *testing.T) {
 	assert := assert.New(t)
 
 	// handle repository error
-	mockRepo := &mocks.UserRepository{}
+	mockRepo := &mocksRepo.UserRepository{}
 	mockRepo.On("FindAll").Return(nil, errors.New("repo error")).Once()
-	mockService := &mocks.UserService{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 	_, err := usecase.ListAllUsers()
 	assert.NotNil(err, "ListAllUsers repo might throw error")
@@ -40,8 +43,8 @@ func Test_ListAllUsers(t *testing.T) {
 func Test_FindByID(t *testing.T) {
 	assert := assert.New(t)
 	id := "1"
-	mockRepo := &mocks.UserRepository{}
-	mockService := &mocks.UserService{}
+	mockRepo := &mocksRepo.UserRepository{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 
 	// handle repository error
@@ -60,8 +63,8 @@ func Test_FindByID(t *testing.T) {
 func Test_RegisterUser_Duplicated(t *testing.T) {
 	assert := assert.New(t)
 	email := "user@example.com"
-	mockRepo := &mocks.UserRepository{}
-	mockService := &mocks.UserService{}
+	mockRepo := &mocksRepo.UserRepository{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 
 	// handle error of service
@@ -75,8 +78,8 @@ func Test_RegisterUser_Duplicated(t *testing.T) {
 func Test_RegisterUser_RepoError(t *testing.T) {
 	assert := assert.New(t)
 	email := "user@example.com"
-	mockRepo := &mocks.UserRepository{}
-	mockService := &mocks.UserService{}
+	mockRepo := &mocksRepo.UserRepository{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 
 	// handle error of repo
@@ -91,8 +94,8 @@ func Test_RegisterUser_RepoError(t *testing.T) {
 func Test_RegisterUser(t *testing.T) {
 	assert := assert.New(t)
 	email := "user@example.com"
-	mockRepo := &mocks.UserRepository{}
-	mockService := &mocks.UserService{}
+	mockRepo := &mocksRepo.UserRepository{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 
 	// handle success of registration
@@ -106,8 +109,8 @@ func Test_RegisterUser(t *testing.T) {
 
 func Test_UpdateUser(t *testing.T) {
 	assert := assert.New(t)
-	mockRepo := &mocks.UserRepository{}
-	mockService := &mocks.UserService{}
+	mockRepo := &mocksRepo.UserRepository{}
+	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
 	user := &User{
 		ID: "8e492e66-9af8-48ab-a22d-61cbaaf333fa",

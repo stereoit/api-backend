@@ -4,7 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stereoit/eventival/pkg/mocks"
+	mocks "github.com/stereoit/eventival/mocks/user/domain/repository"
+
 	"github.com/stereoit/eventival/pkg/user/domain/model"
 	"github.com/stretchr/testify/assert"
 )
@@ -36,7 +37,7 @@ func Test_Duplicated(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 
 	// error for repository error
-	mockRepo.On("FindByEmail", testEmail).Return(nil, errors.New("erro")).Once()
+	mockRepo.On("FindByEmail", testEmail).Return(nil, errors.New("error")).Once()
 	err = service.Duplicated(testEmail)
 	assert.NotNil(err, "repository might throw error as well")
 	mockRepo.AssertExpectations(t)
