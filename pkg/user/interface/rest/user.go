@@ -35,6 +35,17 @@ func (u *RegisterUserRequest) Bind(r *http.Request) error {
 	return nil
 }
 
+// UpdateRequest maps complete user
+type UpdateRequest struct {
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+}
+
+// Bind implements render interface
+func (u *UpdateRequest) Bind(r *http.Request) error {
+	return nil
+}
+
 // UserResponse represents response to created user resource
 type UserResponse struct {
 	*User

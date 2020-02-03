@@ -79,3 +79,87 @@ func Test_userService_RegisterUser(t *testing.T) {
 	}
 }
 
+func Test_userService_UpdateUser(t *testing.T) {
+	tests := []struct {
+		name           string
+		requestPayload string
+		responseStatus int
+		mock           func(*mocks.UserUsecase)
+	}{
+		{
+			name: "OK",
+			requestPayload: `
+				{
+					"email": "test@example.com",
+					"firstName": "Test",
+					"lastName": "User"
+				}
+				`,
+			responseStatus: http.StatusNoContent,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				user := &usecase.User{
+					Email:     "test@example.com",
+					ID:        "1",
+					FirstName: "Test",
+					LastName:  "User",
+				}
+				mockUserUsecase.On("FindByID", "1").Return(user, nil)
+				mockUserUsecase.On("UpdateUser", mock.Anything).Return(nil)
+			},
+		},
+		{
+			name:           "User Not Found",
+			requestPayload: "",
+			responseStatus: http.StatusNotFound,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("FindByID", mock.Anything).Return(nil, errors.New("FindByID user error"))
+			},
+		},
+		{
+			name:           "Invalid payload",
+			requestPayload: "invalid format",
+			responseStatus: http.StatusBadRequest,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("FindByID", mock.Anything).Return(&usecase.User{}, nil)
+			},
+		},
+		{
+			name: "Internal server error",
+			requestPayload: `
+				{
+					"email": "test@example.com",
+					"firstName": "Test",
+					"lastName": "User"
+				}
+			`,
+			responseStatus: http.StatusInternalServerError,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("FindByID", mock.Anything).Return(&usecase.User{}, nil)
+				mockUserUsecase.On("UpdateUser", mock.Anything).Return(errors.New("UpdatedUser error"))
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockUserUsecase := &mocks.UserUsecase{}
+			service := &userService{mockUserUsecase}
+			router := service.Routes()
+			tt.mock(mockUserUsecase)
+
+			req, _ := http.NewRequest("PATCH", "/1", bytes.NewBuffer([]byte(tt.requestPayload)))
+			req.Header.Add("Content-Type", "application/json")
+			rr := httptest.NewRecorder()
+
+			router.ServeHTTP(rr, req.WithContext(context.TODO()))
+			// handler := http.HandlerFunc(service.updateUser)
+			// handler.ServeHTTP(rr, req.WithContext(context.TODO()))
+
+			if status := rr.Code; status != tt.responseStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.responseStatus)
+			}
+			mockUserUsecase.AssertExpectations(t)
+		})
+	}
+}

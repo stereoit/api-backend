@@ -37,6 +37,7 @@ func (s *userService) Routes() chi.Router {
 	r := chi.NewRouter()
 	r.Get("/", s.listAllUsers)
 	r.Post("/", s.registerUser)
+	r.Patch("/{userID}", s.updateUser)
 
 	return r
 }
@@ -71,4 +72,48 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, http.StatusCreated)
 	render.Render(w, r, NewRegisterUserResponse(newUserID))
+}
+
+func (s *userService) updateUser(w http.ResponseWriter, r *http.Request) {
+	userID := chi.URLParam(r, "userID")
+	user, err := s.userUsecase.FindByID(userID)
+	if err != nil {
+		render.Status(r, http.StatusNotFound)
+		render.Render(w, r, ErrNotFound)
+		return
+	}
+
+	request := &UpdateRequest{}
+	if err := render.Bind(r, request); err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	// iterate over provided fields and try to set the updated one
+	if request.FirstName != nil {
+		user.FirstName = *request.FirstName
+	}
+	if request.LastName != nil {
+		user.FirstName = *request.LastName
+	}
+
+	if err := s.userUsecase.UpdateUser(user); err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.Render(w, r, ErrInternalServer(err))
+		return
+	}
+
+	render.Status(r, http.StatusNoContent)
+	render.Render(w, r, NewEmptyResponse())
+}
+
+type emptyResponse struct{}
+
+// NewEmptyResponse returns empty response
+func NewEmptyResponse() render.Renderer {
+	return &emptyResponse{}
+}
+func (er *emptyResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
 }
