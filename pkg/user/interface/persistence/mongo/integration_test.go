@@ -68,10 +68,6 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func Test_One(t *testing.T) {
-	fmt.Println("One test passes")
-}
-
 func TestUserRepository_New(t *testing.T) {
 	assert := assert.New(t)
 
