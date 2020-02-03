@@ -59,7 +59,7 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := render.Bind(r, userRequest); err != nil {
 		render.Status(r, http.StatusBadRequest)
-		render.Render(w, r, ErrInvalidRequest(err))
+		render.Render(w, r, ErrBadRequest(err))
 		return
 	}
 
@@ -86,7 +86,7 @@ func (s *userService) updateUser(w http.ResponseWriter, r *http.Request) {
 	request := &UpdateRequest{}
 	if err := render.Bind(r, request); err != nil {
 		render.Status(r, http.StatusBadRequest)
-		render.Render(w, r, ErrInvalidRequest(err))
+		render.Render(w, r, ErrBadRequest(err))
 		return
 	}
 
