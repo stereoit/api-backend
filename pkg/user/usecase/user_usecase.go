@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/google/uuid"
+	"github.com/stereoit/eventival/pkg/user/domain"
 	"github.com/stereoit/eventival/pkg/user/domain/model"
 	"github.com/stereoit/eventival/pkg/user/domain/repository"
 	"github.com/stereoit/eventival/pkg/user/domain/service"
@@ -51,7 +52,7 @@ func (u *userUsecase) RegisterUser(email string) (string, error) {
 		return "", err
 	}
 	if err := u.service.Duplicated(email); err != nil {
-		return "", err
+		return "", &domain.DuplicateError{}
 	}
 	user := model.NewUser(uid.String(), email)
 	if err := u.repo.Save(user); err != nil {

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	mocks "github.com/stereoit/eventival/mocks/user/usecase"
+	"github.com/stereoit/eventival/pkg/user/domain"
 	"github.com/stereoit/eventival/pkg/user/usecase"
 
 	"github.com/stretchr/testify/mock"
@@ -33,6 +34,14 @@ func Test_userService_RegisterUser(t *testing.T) {
 			responseStatus: http.StatusCreated,
 			mock: func(mockUserUsecase *mocks.UserUsecase) {
 				mockUserUsecase.On("RegisterUser", mock.Anything).Return("1", nil)
+			},
+		},
+		{
+			name:           "Duplicated user",
+			requestPayload: "{\"email\": \"test@example.com\"}",
+			responseStatus: http.StatusBadRequest,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("RegisterUser", mock.Anything).Return("", &domain.DuplicateError{})
 			},
 		},
 		{
@@ -63,7 +72,7 @@ func Test_userService_RegisterUser(t *testing.T) {
 			service := &userService{mockUserUsecase}
 			tt.mock(mockUserUsecase)
 
-			req, _ := http.NewRequest("POST", "/users/", bytes.NewBuffer([]byte(tt.requestPayload)))
+			req, _ := http.NewRequest("POST", "/", bytes.NewBuffer([]byte(tt.requestPayload)))
 			req.Header.Add("Content-Type", "application/json")
 			rr := httptest.NewRecorder()
 

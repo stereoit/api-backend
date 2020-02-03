@@ -5,6 +5,7 @@ import (
 
 	"github.com/sarulabs/di"
 
+	"github.com/stereoit/eventival/pkg/user/domain"
 	"github.com/stereoit/eventival/pkg/user/usecase"
 
 	"github.com/go-chi/chi"
@@ -65,7 +66,10 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 
 	newUserID, err := s.userUsecase.RegisterUser(userRequest.Email)
 	if err != nil {
-		render.Status(r, http.StatusInternalServerError)
+		if _, ok := err.(*domain.DuplicateError); ok {
+			render.Render(w, r, ErrBadRequest(err))
+			return
+		}
 		render.Render(w, r, ErrInternalServer(err))
 		return
 	}
