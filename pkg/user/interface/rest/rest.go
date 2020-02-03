@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/sarulabs/di"
@@ -55,17 +54,18 @@ func (s *userService) listAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
-	userRequest := &UserRequest{}
+	userRequest := &RegisterUserRequest{}
 
 	if err := render.Bind(r, userRequest); err != nil {
-		w.Write([]byte(fmt.Sprintf("%v", err)))
+		render.Status(r, http.StatusBadRequest)
+		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
 	newUserID, err := s.userUsecase.RegisterUser(userRequest.Email)
 	if err != nil {
 		render.Status(r, http.StatusInternalServerError)
-		render.Render(w, r, ErrRender(err))
+		render.Render(w, r, ErrInternalServer(err))
 		return
 	}
 

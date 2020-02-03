@@ -2,30 +2,34 @@ package rest
 
 import (
 	"errors"
-	"github.com/stereoit/eventival/pkg/user/usecase"
 	"net/http"
+
+	"github.com/stereoit/eventival/pkg/user/usecase"
 
 	"github.com/go-chi/render"
 )
 
 // User represents single user
 type User struct {
-	ID        string `json:"id"`
+	ID        string `json:"id,omitempty"`
 	Email     string `json:"email"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	FirstName string `json:"firstName,omitempty"`
+	LastName  string `json:"lastName,omitempty"`
 }
 
-// UserRequest represent incoming user object
-type UserRequest struct {
-	Email string
+// RegisterUserRequest represent incoming user object
+type RegisterUserRequest struct {
+	*User
 }
 
 // Bind implements Binder interface
-func (u *UserRequest) Bind(r *http.Request) error {
+func (u *RegisterUserRequest) Bind(r *http.Request) error {
+	if u.User == nil {
+		return errors.New("missing required fields")
+	}
 
 	if u.Email == "" {
-		return errors.New("missing required User fields")
+		return errors.New("missing required User field")
 	}
 
 	return nil
