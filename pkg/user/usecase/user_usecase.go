@@ -70,7 +70,7 @@ func (u *userUsecase) UpdateUser(user *User) error {
 		return err
 	}
 
-	if err := u.repo.Save(toUser(user)); err != nil {
+	if err := u.repo.Update(toUser(user)); err != nil {
 		// log.Printf("Error: %v\n", err)
 		return err
 	}

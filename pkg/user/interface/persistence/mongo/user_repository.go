@@ -151,6 +151,19 @@ func (r *userRepository) Save(user *model.User) error {
 	return nil
 }
 
+func (r *userRepository) Update(user *model.User) error {
+
+	collection := r.Client.Database(r.database).Collection(r.collection)
+
+	filter := bson.D{primitive.E{Key: "_id", Value: user.GetID()}}
+	_, err := collection.ReplaceOne(context.Background(), filter, toMongoUser(user))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func toMongoUser(user *model.User) *User {
 	return &User{
 		ID:        user.GetID(),

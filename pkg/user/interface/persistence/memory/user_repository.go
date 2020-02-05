@@ -71,6 +71,10 @@ func (r *userRepository) Save(user *model.User) error {
 	return nil
 }
 
+func (r *userRepository) Update(user *model.User) error {
+	return r.Save(user)
+}
+
 // User struct maps the model.User
 type User struct {
 	ID        string

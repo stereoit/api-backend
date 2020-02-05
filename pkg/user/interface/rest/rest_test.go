@@ -34,6 +34,8 @@ func Test_userService_RegisterUser(t *testing.T) {
 			responseStatus: http.StatusCreated,
 			mock: func(mockUserUsecase *mocks.UserUsecase) {
 				mockUserUsecase.On("RegisterUser", mock.Anything).Return("1", nil)
+				mockUserUsecase.On("FindByID", mock.Anything).Return(&usecase.User{}, nil)
+				mockUserUsecase.On("UpdateUser", mock.Anything).Return(nil)
 			},
 		},
 		{

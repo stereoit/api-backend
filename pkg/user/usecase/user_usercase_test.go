@@ -125,13 +125,13 @@ func Test_UpdateUser(t *testing.T) {
 
 	// test repository error
 	user.Email = "user@example.com"
-	mockRepo.On("Save", mock.Anything).Return(errors.New("repo error")).Once()
+	mockRepo.On("Update", mock.Anything).Return(errors.New("repo error")).Once()
 	err = usecase.UpdateUser(user)
 	assert.NotNil(err, "handling repository error")
 	mockRepo.AssertExpectations(t)
 
 	// test valid user
-	mockRepo.On("Save", mock.Anything).Return(nil).Once()
+	mockRepo.On("Update", mock.Anything).Return(nil).Once()
 	err = usecase.UpdateUser(user)
 	assert.Nil(err, "updating user should be OK")
 	mockRepo.AssertExpectations(t)
