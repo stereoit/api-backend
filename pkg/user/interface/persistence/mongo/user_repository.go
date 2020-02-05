@@ -176,7 +176,10 @@ func toMongoUser(user *model.User) *User {
 func toDomainUserList(users []*User) []*model.User {
 	var domainUsers []*model.User
 	for _, user := range users {
-		domainUsers = append(domainUsers, model.NewUser(user.ID, user.Email))
+		domainUser := model.NewUser(user.ID, user.Email)
+		domainUser.SetFirstName(user.FirstName)
+		domainUser.SetLastName(user.LastName)
+		domainUsers = append(domainUsers, domainUser)
 	}
 	return domainUsers
 }

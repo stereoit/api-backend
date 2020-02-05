@@ -19,15 +19,13 @@ type User struct {
 
 // RegisterUserRequest represent incoming user object
 type RegisterUserRequest struct {
-	*User
+	Email     string  `json:"email"`
+	FirstName *string `json:"firstName"`
+	LastName  *string `json:"lastName"`
 }
 
 // Bind implements Binder interface
 func (u *RegisterUserRequest) Bind(r *http.Request) error {
-	if u.User == nil {
-		return errors.New("missing required fields")
-	}
-
 	if u.Email == "" {
 		return errors.New("missing required User field")
 	}
