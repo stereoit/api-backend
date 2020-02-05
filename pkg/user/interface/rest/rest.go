@@ -74,6 +74,27 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := s.userUsecase.FindByID(newUserID)
+	if err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.Render(w, r, ErrInternalServer(err))
+		return
+	}
+
+	// iterate over provided fields and try to set the updated one
+	if userRequest.FirstName != nil {
+		user.FirstName = *userRequest.FirstName
+	}
+	if userRequest.LastName != nil {
+		user.LastName = *userRequest.LastName
+	}
+
+	if err := s.userUsecase.UpdateUser(user); err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.Render(w, r, ErrInternalServer(err))
+		return
+	}
+
 	render.Status(r, http.StatusCreated)
 	render.Render(w, r, NewRegisterUserResponse(newUserID))
 }
