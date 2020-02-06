@@ -3,6 +3,8 @@ package memory_test
 import (
 	"testing"
 
+	"github.com/google/uuid"
+
 	"github.com/stereoit/eventival/pkg/user/domain/model"
 	storage "github.com/stereoit/eventival/pkg/user/interface/persistence/memory"
 
@@ -75,5 +77,22 @@ func TestUserRepository_Save(t *testing.T) {
 	r := storage.NewUserRepository()
 	if err := r.Save(model.NewUser("1", "email")); err != nil {
 		t.Errorf("UserRepository.Save() error =%v", err)
+	}
+}
+
+func TestUserRepository_Delete(t *testing.T) {
+	r := storage.NewUserRepository()
+
+	// create user first
+	uid, err := uuid.NewUUID()
+	if err != nil {
+		t.Errorf("cannot create NewUUID() error =%v", err)
+	}
+	if err := r.Save(model.NewUser(uid.String(), "email")); err != nil {
+		t.Errorf("UserRepository.Save() error =%v", err)
+	}
+
+	if err := r.Delete(uid.String()); err != nil {
+		t.Errorf("cannot delete User() error =%v", err)
 	}
 }

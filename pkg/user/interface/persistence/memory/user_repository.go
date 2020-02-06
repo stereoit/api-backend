@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/stereoit/eventival/pkg/user/domain/model"
@@ -73,6 +74,18 @@ func (r *userRepository) Save(user *model.User) error {
 
 func (r *userRepository) Update(user *model.User) error {
 	return r.Save(user)
+}
+
+func (r *userRepository) Delete(userID string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if _, ok := r.users[userID]; !ok {
+		return errors.New("User does not exists")
+	}
+
+	delete(r.users, userID)
+	return nil
 }
 
 // User struct maps the model.User

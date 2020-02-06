@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	mocks "github.com/stereoit/eventival/mocks/user/domain/repository"
 	mocksRepo "github.com/stereoit/eventival/mocks/user/domain/repository"
 	mocksService "github.com/stereoit/eventival/mocks/user/domain/service"
 
@@ -60,79 +61,155 @@ func Test_FindByID(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 }
 
-func Test_RegisterUser_Duplicated(t *testing.T) {
-	assert := assert.New(t)
-	email := "user@example.com"
-	mockRepo := &mocksRepo.UserRepository{}
-	mockService := &mocksService.UserService{}
-	usecase := NewUserUsecase(mockRepo, mockService)
-
-	// handle error of service
-	mockService.On("Duplicated", email).Return(errors.New("service error")).Once()
-	_, err := usecase.RegisterUser(email)
-	assert.NotNil(err, "service Duplicated might throw error")
-	mockService.AssertExpectations(t)
-
-}
-
-func Test_RegisterUser_RepoError(t *testing.T) {
-	assert := assert.New(t)
-	email := "user@example.com"
-	mockRepo := &mocksRepo.UserRepository{}
-	mockService := &mocksService.UserService{}
-	usecase := NewUserUsecase(mockRepo, mockService)
-
-	// handle error of repo
-	mockService.On("Duplicated", email).Return(nil).Once()
-	mockRepo.On("Save", mock.Anything).Return(errors.New("repo error"))
-	_, err := usecase.RegisterUser(email)
-	assert.NotNil(err, "repo Save might throw error")
-	mockService.AssertExpectations(t)
-	mockRepo.AssertExpectations(t)
-}
-
 func Test_RegisterUser(t *testing.T) {
-	assert := assert.New(t)
-	email := "user@example.com"
-	mockRepo := &mocksRepo.UserRepository{}
-	mockService := &mocksService.UserService{}
-	usecase := NewUserUsecase(mockRepo, mockService)
+	tests := []struct {
+		name    string
+		mock    func(*mocksRepo.UserRepository, *mocksService.UserService)
+		wantErr bool
+		email   string
+	}{
+		{
+			name: "OK",
+			mock: func(mockRepo *mocks.UserRepository, mockService *mocksService.UserService) {
+				mockService.On("Duplicated", mock.Anything).Return(nil).Once()
+				mockRepo.On("Save", mock.Anything).Return(nil)
+			},
+			wantErr: false,
+			email:   "user@example.com",
+		},
+		{
+			name: "Duplicated",
+			mock: func(mockRepo *mocks.UserRepository, mockService *mocksService.UserService) {
+				mockService.On("Duplicated", mock.Anything).Return(errors.New("Duplicated email")).Once()
+			},
+			wantErr: true,
+			email:   "user@example.com",
+		},
+		{
+			name: "Bad email",
+			mock: func(mockRepo *mocks.UserRepository, mockService *mocksService.UserService) {
+				mockService.On("Duplicated", mock.Anything).Return(nil).Once()
+			},
+			wantErr: true,
+			email:   "invalid-email",
+		},
+		{
+			name: "Repo error",
+			mock: func(mockRepo *mocks.UserRepository, mockService *mocksService.UserService) {
+				mockService.On("Duplicated", mock.Anything).Return(nil).Once()
+				mockRepo.On("Save", mock.Anything).Return(errors.New("Repo error"))
+			},
+			wantErr: true,
+			email:   "user@example.com",
+		},
+	}
 
-	// handle success of registration
-	mockService.On("Duplicated", email).Return(nil).Once()
-	mockRepo.On("Save", mock.Anything).Return(nil).Once()
-	id, _ := usecase.RegisterUser(email)
-	assert.NotNil(id, "Registeruser should return ID of new user")
-	mockService.AssertExpectations(t)
-	mockRepo.AssertExpectations(t)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockRepo := &mocksRepo.UserRepository{}
+			mockService := &mocksService.UserService{}
+			usecase := NewUserUsecase(mockRepo, mockService)
+			tt.mock(mockRepo, mockService)
+			_, err := usecase.RegisterUser(tt.email)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("usecase.Delete() error = %v , wantErr %v", err, tt.wantErr)
+				return
+			}
+			mockRepo.AssertExpectations(t)
+		})
+	}
 }
 
 func Test_UpdateUser(t *testing.T) {
-	assert := assert.New(t)
-	mockRepo := &mocksRepo.UserRepository{}
-	mockService := &mocksService.UserService{}
-	usecase := NewUserUsecase(mockRepo, mockService)
-	user := &User{
-		ID: "8e492e66-9af8-48ab-a22d-61cbaaf333fa",
-		// Email:     "user@example.com",
-		FirstName: "Václav",
-		LastName:  "Havel",
+	tests := []struct {
+		name    string
+		mock    func(*mocks.UserRepository)
+		wantErr bool
+		user    *User
+	}{
+		{
+			name: "OK",
+			mock: func(mockRepo *mocks.UserRepository) {
+				mockRepo.On("Update", mock.Anything).Return(nil)
+			},
+			wantErr: false,
+			user: &User{
+				ID:        "8e492e66-9af8-48ab-a22d-61cbaaf333fa",
+				Email:     "user@example.com",
+				FirstName: "Václav",
+				LastName:  "Havel",
+			},
+		},
+		{
+			name:    "Non valid user",
+			mock:    func(*mocks.UserRepository) {},
+			wantErr: true,
+			user:    &User{},
+		},
+		{
+			name: "Repo error",
+			mock: func(mockRepo *mocks.UserRepository) {
+				mockRepo.On("Update", mock.Anything).Return(errors.New("Repo error"))
+			},
+			wantErr: true,
+			user: &User{
+				ID:    "8e492e66-9af8-48ab-a22d-61cbaaf333fa",
+				Email: "user@example.com",
+			},
+		},
 	}
 
-	// test non valid user
-	err := usecase.UpdateUser(user)
-	assert.NotNil(err, "non valid user should have error")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockRepo := &mocksRepo.UserRepository{}
+			mockService := &mocksService.UserService{}
+			usecase := NewUserUsecase(mockRepo, mockService)
+			tt.mock(mockRepo)
+			err := usecase.UpdateUser(tt.user)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("usecase.Delete() error = %v , wantErr %v", err, tt.wantErr)
+				return
+			}
+			mockRepo.AssertExpectations(t)
+		})
+	}
+}
 
-	// test repository error
-	user.Email = "user@example.com"
-	mockRepo.On("Update", mock.Anything).Return(errors.New("repo error")).Once()
-	err = usecase.UpdateUser(user)
-	assert.NotNil(err, "handling repository error")
-	mockRepo.AssertExpectations(t)
+func TestDeleteUser(t *testing.T) {
+	userID := "8e492e66-9af8-48ab-a22d-61cbaaf333fa"
+	tests := []struct {
+		name    string
+		mock    func(*mocks.UserRepository)
+		wantErr bool
+	}{
+		{
+			name:    "Delete User",
+			wantErr: false,
+			mock: func(mockRepo *mocks.UserRepository) {
+				mockRepo.On("Delete", mock.Anything).Return(nil)
+			},
+		},
+		{
+			name: "Repository error",
+			mock: func(mockRepo *mocks.UserRepository) {
+				mockRepo.On("Delete", mock.Anything).Return(errors.New("Repo error"))
+			},
+			wantErr: true,
+		},
+	}
 
-	// test valid user
-	mockRepo.On("Update", mock.Anything).Return(nil).Once()
-	err = usecase.UpdateUser(user)
-	assert.Nil(err, "updating user should be OK")
-	mockRepo.AssertExpectations(t)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockRepo := &mocksRepo.UserRepository{}
+			mockService := &mocksService.UserService{}
+			usecase := NewUserUsecase(mockRepo, mockService)
+			tt.mock(mockRepo)
+			err := usecase.DeleteUser(userID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("usecase.Delete() error = %v , wantErr %v", err, tt.wantErr)
+				return
+			}
+			mockRepo.AssertExpectations(t)
+		})
+	}
 }

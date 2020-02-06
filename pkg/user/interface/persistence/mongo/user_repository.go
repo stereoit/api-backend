@@ -164,6 +164,19 @@ func (r *userRepository) Update(user *model.User) error {
 	return nil
 }
 
+func (r *userRepository) Delete(userID string) error {
+
+	collection := r.Client.Database(r.database).Collection(r.collection)
+
+	filter := bson.D{primitive.E{Key: "_id", Value: userID}}
+	_, err := collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func toMongoUser(user *model.User) *User {
 	return &User{
 		ID:        user.GetID(),

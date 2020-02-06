@@ -14,6 +14,7 @@ type UserUsecase interface {
 	RegisterUser(email string) (string, error)
 	FindByID(id string) (*User, error)
 	UpdateUser(*User) error
+	DeleteUser(id string) error
 }
 
 type userUsecase struct {
@@ -47,14 +48,18 @@ func (u *userUsecase) FindByID(id string) (*User, error) {
 }
 
 func (u *userUsecase) RegisterUser(email string) (string, error) {
+	if err := u.service.Duplicated(email); err != nil {
+		return "", &domain.DuplicateError{}
+	}
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		return "", err
 	}
-	if err := u.service.Duplicated(email); err != nil {
-		return "", &domain.DuplicateError{}
-	}
 	user := model.NewUser(uid.String(), email)
+	if err := user.Validate(); err != nil {
+		// log.Printf("Error: %v\n", err)
+		return "", err
+	}
 	if err := u.repo.Save(user); err != nil {
 		return "", err
 	}
@@ -72,6 +77,14 @@ func (u *userUsecase) UpdateUser(user *User) error {
 
 	if err := u.repo.Update(toUser(user)); err != nil {
 		// log.Printf("Error: %v\n", err)
+		return err
+	}
+	return nil
+}
+
+// DeleteUser deletes user from the system
+func (u *userUsecase) DeleteUser(id string) error {
+	if err := u.repo.Delete(id); err != nil {
 		return err
 	}
 	return nil
