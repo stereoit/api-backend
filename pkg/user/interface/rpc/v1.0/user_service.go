@@ -11,6 +11,7 @@ import (
 type UserService interface {
 	ListUser(ctx context.Context, in *protocol.ListUserRequestType) (*protocol.ListUserResponseType, error)
 	RegisterUser(ctx context.Context, in *protocol.RegisterUserRequestType) (*protocol.RegisterUserResponseType, error)
+	DeleteUser(ctx context.Context, in *protocol.DeleteUserRequestType) (*protocol.DeleteUserResponseType, error)
 }
 
 type userService struct {
@@ -48,6 +49,13 @@ func (s *userService) RegisterUser(ctx context.Context, in *protocol.RegisterUse
 	return &protocol.RegisterUserResponseType{
 		Id: newUserID,
 	}, nil
+}
+
+func (s *userService) DeleteUser(ctx context.Context, in *protocol.DeleteUserRequestType) (*protocol.DeleteUserResponseType, error) {
+	if err := s.userUsecase.DeleteUser(in.GetId()); err != nil {
+		return &protocol.DeleteUserResponseType{}, err
+	}
+	return &protocol.DeleteUserResponseType{}, nil
 }
 
 func toProtocolUser(user *usecase.User) *protocol.User {
