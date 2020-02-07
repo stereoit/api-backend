@@ -38,7 +38,8 @@ Register and list all users
     "users": [
         {
         "id": "cceb464d-b689-11e9-872d-1c3947113383",
-        "email": "robert.smol@stereoit.com"
+        "email": "user@example.com",
+        "firstName": "Test"
         }
     ]
     }

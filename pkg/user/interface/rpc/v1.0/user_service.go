@@ -14,6 +14,7 @@ import (
 type UserService interface {
 	ListUser(ctx context.Context, in *protocol.ListUserRequestType) (*protocol.ListUserResponseType, error)
 	RegisterUser(ctx context.Context, in *protocol.RegisterUserRequestType) (*protocol.RegisterUserResponseType, error)
+	UpdateUser(ctx context.Context, in *protocol.UpdateUserRequestType) (*protocol.EmptyResponseType, error)
 	DeleteUser(ctx context.Context, in *protocol.DeleteUserRequestType) (*protocol.DeleteUserResponseType, error)
 }
 
@@ -67,6 +68,22 @@ func (s *userService) RegisterUser(ctx context.Context, in *protocol.RegisterUse
 	return &protocol.RegisterUserResponseType{
 		Id: newUserID,
 	}, nil
+}
+
+func (s *userService) UpdateUser(ctx context.Context, in *protocol.UpdateUserRequestType) (*protocol.EmptyResponseType, error) {
+	id := in.GetId()
+	user, err := s.userUsecase.FindByID(id)
+	if err != nil {
+		return &protocol.EmptyResponseType{}, status.Error(codes.NotFound, err.Error())
+	}
+	user.FirstName = in.GetFirstName()
+	user.LastName = in.GetLastName()
+
+	if err := s.userUsecase.UpdateUser(user); err != nil {
+		return &protocol.EmptyResponseType{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &protocol.EmptyResponseType{}, nil
 }
 
 func (s *userService) DeleteUser(ctx context.Context, in *protocol.DeleteUserRequestType) (*protocol.DeleteUserResponseType, error) {

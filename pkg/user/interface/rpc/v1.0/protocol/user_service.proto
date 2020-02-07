@@ -5,6 +5,7 @@ package protocol;
 service UserService {
     rpc ListUser (ListUserRequestType) returns (ListUserResponseType) {}
     rpc RegisterUser (RegisterUserRequestType) returns (RegisterUserResponseType) {}
+    rpc UpdateUser (UpdateUserRequestType) returns (EmptyResponseType) {}
     rpc DeleteUser (DeleteUserRequestType) returns (DeleteUserResponseType) {}
 }
 
@@ -15,9 +16,9 @@ message User {
     string lastName = 4;
 }
 
-message ListUserRequestType {
+message ListUserRequestType {}
 
-}
+message EmptyResponseType {}
 
 message ListUserResponseType {
     repeated User users = 1;
@@ -33,10 +34,14 @@ message RegisterUserResponseType {
     string id = 1;
 }
 
+message UpdateUserRequestType {
+    string id = 1;
+    string firstName = 2;
+    string lastName = 3;
+}
+
 message DeleteUserRequestType {
     string id = 1;
 }
 
-message DeleteUserResponseType {
-
-}
+message DeleteUserResponseType {}

@@ -116,6 +116,37 @@ func (m *ListUserRequestType) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ListUserRequestType proto.InternalMessageInfo
 
+type EmptyResponseType struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *EmptyResponseType) Reset()         { *m = EmptyResponseType{} }
+func (m *EmptyResponseType) String() string { return proto.CompactTextString(m) }
+func (*EmptyResponseType) ProtoMessage()    {}
+func (*EmptyResponseType) Descriptor() ([]byte, []int) {
+	return fileDescriptor_13ff9881153db6f7, []int{2}
+}
+
+func (m *EmptyResponseType) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EmptyResponseType.Unmarshal(m, b)
+}
+func (m *EmptyResponseType) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EmptyResponseType.Marshal(b, m, deterministic)
+}
+func (m *EmptyResponseType) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EmptyResponseType.Merge(m, src)
+}
+func (m *EmptyResponseType) XXX_Size() int {
+	return xxx_messageInfo_EmptyResponseType.Size(m)
+}
+func (m *EmptyResponseType) XXX_DiscardUnknown() {
+	xxx_messageInfo_EmptyResponseType.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EmptyResponseType proto.InternalMessageInfo
+
 type ListUserResponseType struct {
 	Users                []*User  `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -127,7 +158,7 @@ func (m *ListUserResponseType) Reset()         { *m = ListUserResponseType{} }
 func (m *ListUserResponseType) String() string { return proto.CompactTextString(m) }
 func (*ListUserResponseType) ProtoMessage()    {}
 func (*ListUserResponseType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_13ff9881153db6f7, []int{2}
+	return fileDescriptor_13ff9881153db6f7, []int{3}
 }
 
 func (m *ListUserResponseType) XXX_Unmarshal(b []byte) error {
@@ -168,7 +199,7 @@ func (m *RegisterUserRequestType) Reset()         { *m = RegisterUserRequestType
 func (m *RegisterUserRequestType) String() string { return proto.CompactTextString(m) }
 func (*RegisterUserRequestType) ProtoMessage()    {}
 func (*RegisterUserRequestType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_13ff9881153db6f7, []int{3}
+	return fileDescriptor_13ff9881153db6f7, []int{4}
 }
 
 func (m *RegisterUserRequestType) XXX_Unmarshal(b []byte) error {
@@ -221,7 +252,7 @@ func (m *RegisterUserResponseType) Reset()         { *m = RegisterUserResponseTy
 func (m *RegisterUserResponseType) String() string { return proto.CompactTextString(m) }
 func (*RegisterUserResponseType) ProtoMessage()    {}
 func (*RegisterUserResponseType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_13ff9881153db6f7, []int{4}
+	return fileDescriptor_13ff9881153db6f7, []int{5}
 }
 
 func (m *RegisterUserResponseType) XXX_Unmarshal(b []byte) error {
@@ -249,6 +280,61 @@ func (m *RegisterUserResponseType) GetId() string {
 	return ""
 }
 
+type UpdateUserRequestType struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	FirstName            string   `protobuf:"bytes,2,opt,name=firstName,proto3" json:"firstName,omitempty"`
+	LastName             string   `protobuf:"bytes,3,opt,name=lastName,proto3" json:"lastName,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UpdateUserRequestType) Reset()         { *m = UpdateUserRequestType{} }
+func (m *UpdateUserRequestType) String() string { return proto.CompactTextString(m) }
+func (*UpdateUserRequestType) ProtoMessage()    {}
+func (*UpdateUserRequestType) Descriptor() ([]byte, []int) {
+	return fileDescriptor_13ff9881153db6f7, []int{6}
+}
+
+func (m *UpdateUserRequestType) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateUserRequestType.Unmarshal(m, b)
+}
+func (m *UpdateUserRequestType) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateUserRequestType.Marshal(b, m, deterministic)
+}
+func (m *UpdateUserRequestType) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateUserRequestType.Merge(m, src)
+}
+func (m *UpdateUserRequestType) XXX_Size() int {
+	return xxx_messageInfo_UpdateUserRequestType.Size(m)
+}
+func (m *UpdateUserRequestType) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateUserRequestType.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateUserRequestType proto.InternalMessageInfo
+
+func (m *UpdateUserRequestType) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *UpdateUserRequestType) GetFirstName() string {
+	if m != nil {
+		return m.FirstName
+	}
+	return ""
+}
+
+func (m *UpdateUserRequestType) GetLastName() string {
+	if m != nil {
+		return m.LastName
+	}
+	return ""
+}
+
 type DeleteUserRequestType struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -260,7 +346,7 @@ func (m *DeleteUserRequestType) Reset()         { *m = DeleteUserRequestType{} }
 func (m *DeleteUserRequestType) String() string { return proto.CompactTextString(m) }
 func (*DeleteUserRequestType) ProtoMessage()    {}
 func (*DeleteUserRequestType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_13ff9881153db6f7, []int{5}
+	return fileDescriptor_13ff9881153db6f7, []int{7}
 }
 
 func (m *DeleteUserRequestType) XXX_Unmarshal(b []byte) error {
@@ -298,7 +384,7 @@ func (m *DeleteUserResponseType) Reset()         { *m = DeleteUserResponseType{}
 func (m *DeleteUserResponseType) String() string { return proto.CompactTextString(m) }
 func (*DeleteUserResponseType) ProtoMessage()    {}
 func (*DeleteUserResponseType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_13ff9881153db6f7, []int{6}
+	return fileDescriptor_13ff9881153db6f7, []int{8}
 }
 
 func (m *DeleteUserResponseType) XXX_Unmarshal(b []byte) error {
@@ -322,9 +408,11 @@ var xxx_messageInfo_DeleteUserResponseType proto.InternalMessageInfo
 func init() {
 	proto.RegisterType((*User)(nil), "protocol.User")
 	proto.RegisterType((*ListUserRequestType)(nil), "protocol.ListUserRequestType")
+	proto.RegisterType((*EmptyResponseType)(nil), "protocol.EmptyResponseType")
 	proto.RegisterType((*ListUserResponseType)(nil), "protocol.ListUserResponseType")
 	proto.RegisterType((*RegisterUserRequestType)(nil), "protocol.RegisterUserRequestType")
 	proto.RegisterType((*RegisterUserResponseType)(nil), "protocol.RegisterUserResponseType")
+	proto.RegisterType((*UpdateUserRequestType)(nil), "protocol.UpdateUserRequestType")
 	proto.RegisterType((*DeleteUserRequestType)(nil), "protocol.DeleteUserRequestType")
 	proto.RegisterType((*DeleteUserResponseType)(nil), "protocol.DeleteUserResponseType")
 }
@@ -334,28 +422,30 @@ func init() {
 }
 
 var fileDescriptor_13ff9881153db6f7 = []byte{
-	// 325 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x51, 0x4d, 0x4f, 0xc2, 0x40,
-	0x14, 0xb4, 0x05, 0x0c, 0x3c, 0x0c, 0x87, 0x15, 0x74, 0xd3, 0xf8, 0x81, 0x1b, 0x13, 0x89, 0x87,
-	0x56, 0xf1, 0xe0, 0xc5, 0xa3, 0x37, 0x8d, 0x89, 0x55, 0xe3, 0xd1, 0xd4, 0xf2, 0x4a, 0x36, 0x16,
-	0x5a, 0x77, 0x17, 0x12, 0xff, 0x80, 0xbf, 0xdb, 0x74, 0x6b, 0xdd, 0xd2, 0xb4, 0x1e, 0x77, 0x66,
-	0xde, 0xbc, 0x79, 0xb3, 0x70, 0x9d, 0x7e, 0xcc, 0xbd, 0x95, 0x44, 0xe1, 0xf1, 0xa5, 0x42, 0x11,
-	0x05, 0x21, 0x7a, 0x22, 0x0d, 0xbd, 0xf5, 0xa5, 0x7b, 0xe1, 0xa5, 0x22, 0x51, 0x49, 0x98, 0xc4,
-	0x5a, 0xf0, 0x26, 0x51, 0xac, 0x79, 0x88, 0xae, 0x46, 0x49, 0xb7, 0x20, 0x59, 0x04, 0xed, 0x17,
-	0x89, 0x82, 0x0c, 0xc0, 0xe6, 0x33, 0x6a, 0x8d, 0xad, 0x49, 0xcf, 0xb7, 0xf9, 0x8c, 0x0c, 0xa1,
-	0x83, 0x8b, 0x80, 0xc7, 0xd4, 0xd6, 0x50, 0xfe, 0x20, 0x07, 0xd0, 0x8b, 0xb8, 0x90, 0xea, 0x21,
-	0x58, 0x20, 0x6d, 0x69, 0xc6, 0x00, 0xc4, 0x81, 0x6e, 0x1c, 0xfc, 0x92, 0x6d, 0x4d, 0xfe, 0xbd,
-	0xd9, 0x08, 0x76, 0xef, 0xb9, 0x54, 0xd9, 0x2e, 0x1f, 0x3f, 0x57, 0x28, 0xd5, 0xf3, 0x57, 0x8a,
-	0xec, 0x06, 0x86, 0x06, 0x96, 0x69, 0xb2, 0x94, 0x98, 0xe1, 0xe4, 0x14, 0x3a, 0x59, 0x6c, 0x49,
-	0xad, 0x71, 0x6b, 0xd2, 0x9f, 0x0e, 0xdc, 0x22, 0xb0, 0xab, 0xa5, 0x39, 0xc9, 0x38, 0xec, 0xfb,
-	0x38, 0xe7, 0x52, 0xa1, 0xa8, 0x18, 0x9b, 0xfc, 0x56, 0x63, 0x7e, 0xfb, 0xbf, 0xfc, 0xad, 0x4a,
-	0xfe, 0x73, 0xa0, 0x9b, 0xab, 0x4a, 0x61, 0x2b, 0xdd, 0xb1, 0x33, 0x18, 0xdd, 0x62, 0x8c, 0x0a,
-	0xab, 0xa1, 0xaa, 0x42, 0x0a, 0x7b, 0x65, 0xa1, 0xb1, 0x9c, 0x7e, 0xdb, 0xd0, 0xcf, 0xc0, 0xa7,
-	0xfc, 0xdb, 0xc8, 0x1d, 0x74, 0x8b, 0x9e, 0xc8, 0xa1, 0x29, 0xa3, 0xa6, 0x52, 0xe7, 0xa8, 0x8e,
-	0x36, 0xd6, 0x6c, 0x8b, 0xbc, 0xc2, 0x4e, 0xf9, 0x16, 0x72, 0x62, 0x26, 0x1a, 0xea, 0x74, 0x58,
-	0x93, 0x64, 0xc3, 0xf8, 0x11, 0xc0, 0xdc, 0x43, 0x8e, 0xcd, 0x4c, 0x6d, 0x1d, 0xce, 0xb8, 0x5e,
-	0x50, 0xb6, 0x7c, 0xdf, 0xd6, 0x92, 0xab, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xa3, 0xb4, 0xce,
-	0x63, 0xeb, 0x02, 0x00, 0x00,
+	// 366 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x52, 0x4f, 0x4f, 0xfa, 0x40,
+	0x10, 0xa5, 0x05, 0x7e, 0x81, 0xe1, 0x17, 0x12, 0x17, 0xd0, 0xa6, 0xfe, 0xc3, 0xc6, 0x44, 0xe2,
+	0xa1, 0x55, 0x3c, 0x78, 0xf1, 0xa8, 0x27, 0x89, 0x89, 0x55, 0xe2, 0xd1, 0xd4, 0x32, 0x90, 0x8d,
+	0x85, 0xae, 0xbb, 0x0b, 0x09, 0xdf, 0xd3, 0x0f, 0x64, 0x58, 0xc4, 0x5d, 0x6a, 0xd1, 0xc4, 0xe3,
+	0xbe, 0xf7, 0x76, 0x66, 0xde, 0x9b, 0x81, 0x4b, 0xf6, 0x3a, 0x0a, 0xa6, 0x02, 0x79, 0x40, 0x27,
+	0x12, 0xf9, 0x30, 0x8a, 0x31, 0xe0, 0x2c, 0x0e, 0x66, 0xe7, 0xfe, 0x59, 0xc0, 0x78, 0x2a, 0xd3,
+	0x38, 0x4d, 0x94, 0xe0, 0x59, 0x20, 0x9f, 0xd1, 0x18, 0x7d, 0x85, 0x92, 0xca, 0x8a, 0xf4, 0x86,
+	0x50, 0xea, 0x0b, 0xe4, 0xa4, 0x0e, 0x36, 0x1d, 0x38, 0x56, 0xdb, 0xea, 0x54, 0x43, 0x9b, 0x0e,
+	0x48, 0x13, 0xca, 0x38, 0x8e, 0x68, 0xe2, 0xd8, 0x0a, 0x5a, 0x3e, 0xc8, 0x1e, 0x54, 0x87, 0x94,
+	0x0b, 0x79, 0x17, 0x8d, 0xd1, 0x29, 0x2a, 0x46, 0x03, 0xc4, 0x85, 0x4a, 0x12, 0x7d, 0x92, 0x25,
+	0x45, 0x7e, 0xbd, 0xbd, 0x16, 0x34, 0x7a, 0x54, 0xc8, 0x45, 0xaf, 0x10, 0xdf, 0xa6, 0x28, 0xe4,
+	0xe3, 0x9c, 0xa1, 0xd7, 0x80, 0xad, 0x9b, 0x31, 0x93, 0xf3, 0x10, 0x05, 0x4b, 0x27, 0x02, 0x15,
+	0x78, 0x05, 0x4d, 0xad, 0xd5, 0x38, 0x39, 0x86, 0xf2, 0xc2, 0x8b, 0x70, 0xac, 0x76, 0xb1, 0x53,
+	0xeb, 0xd6, 0xfd, 0x95, 0x0b, 0x5f, 0x49, 0x97, 0xa4, 0x47, 0x61, 0x27, 0xc4, 0x11, 0x15, 0x12,
+	0x79, 0xa6, 0x9b, 0x36, 0x65, 0x6d, 0x34, 0x65, 0xff, 0x64, 0xaa, 0x98, 0x31, 0x75, 0x0a, 0xce,
+	0x7a, 0x2b, 0x63, 0xd8, 0x4c, 0xa0, 0x5e, 0x04, 0xad, 0x3e, 0x1b, 0x44, 0x12, 0xb3, 0x43, 0x65,
+	0x93, 0xff, 0xfb, 0x38, 0x27, 0xd0, 0xba, 0xc6, 0x04, 0x7f, 0x6d, 0xe1, 0x39, 0xb0, 0x6d, 0x0a,
+	0xf5, 0xd4, 0xdd, 0x77, 0x1b, 0x6a, 0x0b, 0xf0, 0x61, 0x79, 0x2e, 0xe4, 0x16, 0x2a, 0xab, 0x55,
+	0x90, 0x7d, 0x9d, 0x77, 0xce, 0x2a, 0xdd, 0x83, 0x3c, 0xda, 0xd8, 0x6a, 0x81, 0x3c, 0xc1, 0x7f,
+	0x33, 0x2e, 0x72, 0xa4, 0x7f, 0x6c, 0xd8, 0x98, 0xeb, 0x6d, 0x92, 0xac, 0x15, 0xee, 0x01, 0xe8,
+	0x6c, 0xc9, 0xa1, 0x71, 0x17, 0x79, 0x89, 0xbb, 0xbb, 0x5a, 0xf0, 0xfd, 0xf8, 0x0a, 0xe4, 0x1e,
+	0x40, 0xa7, 0x63, 0x56, 0xcb, 0x0d, 0xd7, 0x6d, 0xe7, 0x0b, 0xcc, 0x92, 0x2f, 0xff, 0x94, 0xe4,
+	0xe2, 0x23, 0x00, 0x00, 0xff, 0xff, 0xf3, 0x20, 0x6c, 0x31, 0xb1, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -372,6 +462,7 @@ const _ = grpc.SupportPackageIsVersion4
 type UserServiceClient interface {
 	ListUser(ctx context.Context, in *ListUserRequestType, opts ...grpc.CallOption) (*ListUserResponseType, error)
 	RegisterUser(ctx context.Context, in *RegisterUserRequestType, opts ...grpc.CallOption) (*RegisterUserResponseType, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequestType, opts ...grpc.CallOption) (*EmptyResponseType, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequestType, opts ...grpc.CallOption) (*DeleteUserResponseType, error)
 }
 
@@ -401,6 +492,15 @@ func (c *userServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRe
 	return out, nil
 }
 
+func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequestType, opts ...grpc.CallOption) (*EmptyResponseType, error) {
+	out := new(EmptyResponseType)
+	err := c.cc.Invoke(ctx, "/protocol.UserService/UpdateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequestType, opts ...grpc.CallOption) (*DeleteUserResponseType, error) {
 	out := new(DeleteUserResponseType)
 	err := c.cc.Invoke(ctx, "/protocol.UserService/DeleteUser", in, out, opts...)
@@ -414,6 +514,7 @@ func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserReques
 type UserServiceServer interface {
 	ListUser(context.Context, *ListUserRequestType) (*ListUserResponseType, error)
 	RegisterUser(context.Context, *RegisterUserRequestType) (*RegisterUserResponseType, error)
+	UpdateUser(context.Context, *UpdateUserRequestType) (*EmptyResponseType, error)
 	DeleteUser(context.Context, *DeleteUserRequestType) (*DeleteUserResponseType, error)
 }
 
@@ -457,6 +558,24 @@ func _UserService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequestType)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protocol.UserService/UpdateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserRequestType))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserRequestType)
 	if err := dec(in); err != nil {
@@ -486,6 +605,10 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterUser",
 			Handler:    _UserService_RegisterUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _UserService_UpdateUser_Handler,
 		},
 		{
 			MethodName: "DeleteUser",
