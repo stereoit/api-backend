@@ -174,3 +174,47 @@ func Test_userService_UpdateUser(t *testing.T) {
 		})
 	}
 }
+
+func Test_userService_DeleteUser(t *testing.T) {
+	tests := []struct {
+		name           string
+		responseStatus int
+		mock           func(*mocks.UserUsecase)
+	}{
+		{
+			name:           "OK",
+			responseStatus: http.StatusNoContent,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("DeleteUser", mock.Anything).Return(nil)
+			},
+		},
+		{
+			name:           "Usecase Error",
+			responseStatus: http.StatusInternalServerError,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("DeleteUser", mock.Anything).Return(errors.New("Usecase error"))
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockUserUsecase := &mocks.UserUsecase{}
+			service := &userService{mockUserUsecase}
+			router := service.Routes()
+			tt.mock(mockUserUsecase)
+
+			req, _ := http.NewRequest("DELETE", "/1", nil)
+			req.Header.Add("Content-Type", "application/json")
+			rr := httptest.NewRecorder()
+
+			router.ServeHTTP(rr, req.WithContext(context.TODO()))
+
+			if status := rr.Code; status != tt.responseStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.responseStatus)
+			}
+			mockUserUsecase.AssertExpectations(t)
+		})
+	}
+}

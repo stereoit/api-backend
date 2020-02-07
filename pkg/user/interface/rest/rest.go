@@ -39,6 +39,7 @@ func (s *userService) Routes() chi.Router {
 	r.Get("/", s.listAllUsers)
 	r.Post("/", s.registerUser)
 	r.Patch("/{userID}", s.updateUser)
+	r.Delete("/{userID}", s.deleteUser)
 
 	return r
 }
@@ -135,6 +136,18 @@ func patchUser(user *usecase.User, request *UpdateRequest) {
 	if request.LastName != nil {
 		user.FirstName = *request.LastName
 	}
+}
+
+func (s *userService) deleteUser(w http.ResponseWriter, r *http.Request) {
+	userID := chi.URLParam(r, "userID")
+	if err := s.userUsecase.DeleteUser(userID); err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.Render(w, r, NewEmptyResponse())
+		return
+	}
+
+	render.Status(r, http.StatusNoContent)
+	render.Render(w, r, NewEmptyResponse())
 }
 
 type emptyResponse struct{}
