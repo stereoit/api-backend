@@ -25,6 +25,8 @@ message ListUserResponseType {
 
 message RegisterUserRequestType {
     string email = 1;
+    string firstName = 2;
+    string lastName = 3;
 }
 
 message RegisterUserResponseType {

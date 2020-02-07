@@ -29,7 +29,7 @@ Then in another terminal
 Register and list all users
 
 ```
-    UserService@127.0.0.1:8000> client.registerUser({'email':'robert.smol@stereoit.com'}, pr)
+    UserService@127.0.0.1:8000> client.registerUser({'email':'user@example.com', 'firstName':'Test'}, pr)
     EventEmitter {}
     serService@127.0.0.1:8000> client.listUser({}, pr)
     EventEmitter {}

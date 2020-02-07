@@ -3,8 +3,11 @@ package v1
 import (
 	"context"
 
+	"github.com/stereoit/eventival/pkg/user/domain"
 	"github.com/stereoit/eventival/pkg/user/interface/rpc/v1.0/protocol"
 	"github.com/stereoit/eventival/pkg/user/usecase"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // UserService interface
@@ -43,6 +46,21 @@ func (s *userService) RegisterUser(ctx context.Context, in *protocol.RegisterUse
 
 	newUserID, err := s.userUsecase.RegisterUser(in.GetEmail())
 	if err != nil {
+		if _, ok := err.(*domain.DuplicateError); ok {
+			err = status.Error(codes.AlreadyExists, err.Error())
+		}
+		return &protocol.RegisterUserResponseType{}, err
+	}
+
+	user, err := s.userUsecase.FindByID(newUserID)
+	if err != nil {
+		return &protocol.RegisterUserResponseType{}, err
+	}
+
+	user.FirstName = in.GetFirstName()
+	user.LastName = in.GetLastName()
+
+	if err := s.userUsecase.UpdateUser(user); err != nil {
 		return &protocol.RegisterUserResponseType{}, err
 	}
 
