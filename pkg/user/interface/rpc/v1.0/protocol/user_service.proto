@@ -6,7 +6,7 @@ service UserService {
     rpc ListUser (ListUserRequestType) returns (ListUserResponseType) {}
     rpc RegisterUser (RegisterUserRequestType) returns (RegisterUserResponseType) {}
     rpc UpdateUser (UpdateUserRequestType) returns (EmptyResponseType) {}
-    rpc DeleteUser (DeleteUserRequestType) returns (DeleteUserResponseType) {}
+    rpc DeleteUser (DeleteUserRequestType) returns (EmptyResponseType) {}
 }
 
 message User {
@@ -43,5 +43,3 @@ message UpdateUserRequestType {
 message DeleteUserRequestType {
     string id = 1;
 }
-
-message DeleteUserResponseType {}
