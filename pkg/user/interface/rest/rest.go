@@ -116,7 +116,13 @@ func (s *userService) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	patchUser(user, request)
+	// iterate over provided fields and try to set the updated one
+	if request.FirstName != nil {
+		user.FirstName = *request.FirstName
+	}
+	if request.LastName != nil {
+		user.FirstName = *request.LastName
+	}
 
 	if err := s.userUsecase.UpdateUser(user); err != nil {
 		render.Status(r, http.StatusInternalServerError)
@@ -126,16 +132,6 @@ func (s *userService) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, http.StatusNoContent)
 	render.Render(w, r, NewEmptyResponse())
-}
-
-func patchUser(user *usecase.User, request *UpdateRequest) {
-	// iterate over provided fields and try to set the updated one
-	if request.FirstName != nil {
-		user.FirstName = *request.FirstName
-	}
-	if request.LastName != nil {
-		user.FirstName = *request.LastName
-	}
 }
 
 func (s *userService) deleteUser(w http.ResponseWriter, r *http.Request) {
