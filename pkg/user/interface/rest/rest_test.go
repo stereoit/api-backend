@@ -218,3 +218,59 @@ func Test_userService_DeleteUser(t *testing.T) {
 		})
 	}
 }
+
+func Test_userService_ListUser(t *testing.T) {
+	tests := []struct {
+		name           string
+		responseStatus int
+		mock           func(*mocks.UserUsecase)
+	}{
+		{
+			name:           "OK",
+			responseStatus: http.StatusOK,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("FindByID", "1").Return(&usecase.User{
+					ID:        "1",
+					Email:     "test@example.com",
+					FirstName: "Test",
+					LastName:  "User",
+				}, nil)
+			},
+		},
+		{
+			name:           "User not found",
+			responseStatus: http.StatusNotFound,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("FindByID", "1").Return(nil, nil)
+			},
+		},
+		{
+			name:           "Usecase Error",
+			responseStatus: http.StatusInternalServerError,
+			mock: func(mockUserUsecase *mocks.UserUsecase) {
+				mockUserUsecase.On("FindByID", "1").Return(nil, errors.New("Usecase error"))
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockUserUsecase := &mocks.UserUsecase{}
+			service := &userService{mockUserUsecase}
+			router := service.Routes()
+			tt.mock(mockUserUsecase)
+
+			req, _ := http.NewRequest("GET", "/1", nil)
+			req.Header.Add("Content-Type", "application/json")
+			rr := httptest.NewRecorder()
+
+			router.ServeHTTP(rr, req.WithContext(context.TODO()))
+
+			if status := rr.Code; status != tt.responseStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.responseStatus)
+			}
+			mockUserUsecase.AssertExpectations(t)
+		})
+	}
+}

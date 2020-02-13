@@ -38,6 +38,7 @@ func (s *userService) Routes() chi.Router {
 	r := chi.NewRouter()
 	r.Get("/", s.listAllUsers)
 	r.Post("/", s.registerUser)
+	r.Get("/{userID}", s.listUser)
 	r.Patch("/{userID}", s.updateUser)
 	r.Delete("/{userID}", s.deleteUser)
 
@@ -98,6 +99,26 @@ func (s *userService) registerUser(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, http.StatusCreated)
 	render.Render(w, r, NewRegisterUserResponse(newUserID))
+}
+
+func (s *userService) listUser(w http.ResponseWriter, r *http.Request) {
+	userID := chi.URLParam(r, "userID")
+	user, err := s.userUsecase.FindByID(userID)
+	if err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.Render(w, r, ErrInternalServer(err))
+		return
+	}
+
+	if user == nil {
+		render.Status(r, http.StatusNotFound)
+		render.Render(w, r, ErrNotFound)
+		return
+	}
+
+	if err := render.Render(w, r, NewUserResponse(toUser(user))); err != nil {
+		render.Render(w, r, ErrRender(err))
+	}
 }
 
 func (s *userService) updateUser(w http.ResponseWriter, r *http.Request) {
