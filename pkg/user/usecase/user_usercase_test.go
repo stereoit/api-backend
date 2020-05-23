@@ -24,21 +24,24 @@ func Test_NewUserUsecase(t *testing.T) {
 
 func Test_ListAllUsers(t *testing.T) {
 	assert := assert.New(t)
+	page := 0
+	limit := 1
 
 	// handle repository error
 	mockRepo := &mocksRepo.UserRepository{}
-	mockRepo.On("FindAll").Return(nil, errors.New("repo error")).Once()
+	mockRepo.On("FindAll", page, limit).Return(nil, errors.New("repo error")).Once()
 	mockService := &mocksService.UserService{}
 	usecase := NewUserUsecase(mockRepo, mockService)
-	_, err := usecase.ListAllUsers()
+	_, err := usecase.ListAllUsers(page, limit)
 	assert.NotNil(err, "ListAllUsers repo might throw error")
 	mockRepo.AssertExpectations(t)
 
 	usersResult := []*model.User{&model.User{}, &model.User{}}
-	mockRepo.On("FindAll").Return(usersResult, nil).Once()
-	users, _ := usecase.ListAllUsers()
+	mockRepo.On("FindAll", page, limit).Return(usersResult, nil).Once()
+	users, _ := usecase.ListAllUsers(page, limit)
 	assert.NotNil(users, "ListAllUsers should return some users")
 	mockRepo.AssertExpectations(t)
+
 }
 
 func Test_FindByID(t *testing.T) {

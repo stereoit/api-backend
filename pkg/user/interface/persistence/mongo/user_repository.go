@@ -81,8 +81,8 @@ func getClient(connection string) (*mongodb.Client, error) {
 }
 
 // Here we implement full repository interface methods from domain.UserRepository
-
-func (r *userRepository) FindAll() ([]*model.User, error) {
+// TODO implement page + limit test and code
+func (r *userRepository) FindAll(page, limit int) ([]*model.User, error) {
 	filter := bson.D{}
 	collection := r.Client.Database(r.database).Collection(r.collection)
 

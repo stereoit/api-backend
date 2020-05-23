@@ -10,24 +10,36 @@ import (
 	"golang.org/x/net/context"
 )
 
-const defaultPage = "0"
-const defaultLimit = "10"
+const defaultPage = 0
+const defaultPageStr = "0"
+const defaultLimit = 10
+const defaultLimitStr = "10"
 
 var (
 	contextKeyPage  = contextKey("page")
 	contextKeyLimit = contextKey("limit")
 )
 
-// PageParam extracts the `page` parameter from the context
-func PageParam(ctx context.Context) (string, bool) {
-	pageStr, ok := ctx.Value(contextKeyPage).(string)
-	return pageStr, ok
+// PageParam extracts the `page` parameter from the context,
+// return `defaultPage` if not set
+func PageParam(ctx context.Context) int {
+	page, ok := ctx.Value(contextKeyPage).(int)
+	if !ok {
+		return defaultPage
+	}
+
+	return page
 }
 
-// LimitParam extracts the `page` parameter from the context
-func LimitParam(ctx context.Context) (string, bool) {
-	limitStr, ok := ctx.Value(contextKeyLimit).(string)
-	return limitStr, ok
+// LimitParam extracts the `page` parameter from the context,
+// return default value if not set
+func LimitParam(ctx context.Context) int {
+	limit, ok := ctx.Value(contextKeyLimit).(int)
+	if !ok {
+		return defaultLimit
+	}
+
+	return limit
 }
 
 // paginate is a middleware to implement paginated request
@@ -36,7 +48,7 @@ func paginate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		page := r.URL.Query().Get("page")
 		if page == "" {
-			page = defaultPage
+			page = defaultPageStr
 		}
 
 		pageInt, err := strconv.Atoi(page)
@@ -53,7 +65,7 @@ func paginate(next http.Handler) http.Handler {
 
 		limit := r.URL.Query().Get("limit")
 		if limit == "" {
-			limit = defaultLimit
+			limit = defaultLimitStr
 		}
 
 		limitInt, err := strconv.Atoi(limit)
@@ -68,8 +80,8 @@ func paginate(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), contextKeyPage, page)
-		ctx = context.WithValue(ctx, contextKeyLimit, limit)
+		ctx := context.WithValue(r.Context(), contextKeyPage, pageInt)
+		ctx = context.WithValue(ctx, contextKeyLimit, limitInt)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

@@ -46,7 +46,9 @@ func (s *userService) Routes() chi.Router {
 }
 
 func (s *userService) listAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := s.userUsecase.ListAllUsers()
+	page := PageParam(r.Context())
+	limit := LimitParam(r.Context())
+	users, err := s.userUsecase.ListAllUsers(page, limit)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}

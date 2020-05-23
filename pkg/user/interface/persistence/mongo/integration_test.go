@@ -79,8 +79,10 @@ func TestUserRepository_New(t *testing.T) {
 func TestUserRepository_FindAll(t *testing.T) {
 	assert := assert.New(t)
 	r := getRepository()
+	page := 0
+	limit := 1
 
-	users, err := r.FindAll()
+	users, err := r.FindAll(page, limit)
 	assert.Nil(err, "Error obtaining all users = %v", err)
 
 	if len(users) != 0 {
@@ -90,7 +92,7 @@ func TestUserRepository_FindAll(t *testing.T) {
 	uid, _ := uuid.NewUUID()
 	r.Save(model.NewUser(uid.String(), fmt.Sprintf("%s@example.com", uid.String())))
 
-	users, err = r.FindAll()
+	users, err = r.FindAll(page, limit)
 	if err != nil {
 		t.Fatalf("Error obtaining all users = %v", err)
 	}

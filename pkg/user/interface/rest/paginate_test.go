@@ -11,74 +11,93 @@ import (
 
 func TestPaginatePageParam(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.TODO()
-	ctx = context.WithValue(ctx, contextKeyPage, "1")
 
-	page, ok := PageParam(ctx)
+	ctx := context.WithValue(context.TODO(), contextKeyPage, "test")
+	page := PageParam(ctx)
+	assert.Equal(page, defaultPage, "fall back in case of wrong input")
 
-	assert.True(ok, "we did set the context")
-	assert.Equal(page, "1", "we should get page parameter correctly set")
+	ctx = context.WithValue(context.TODO(), contextKeyPage, 1)
+	page = PageParam(ctx)
+	assert.Equal(page, 1, "we should get page parameter correctly set")
 }
 
 func TestPaginateLimitParam(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.TODO()
-	ctx = context.WithValue(ctx, contextKeyLimit, "1")
 
-	limit, ok := LimitParam(ctx)
+	ctx := context.WithValue(context.TODO(), contextKeyLimit, "test")
+	limit := LimitParam(ctx)
+	assert.Equal(limit, defaultLimit, "fall back in case of wrong input")
 
-	assert.True(ok, "we did set the context")
-	assert.Equal(limit, "1", "we should get page parameter correctly set")
+	ctx = context.WithValue(context.TODO(), contextKeyLimit, 1)
+	limit = LimitParam(ctx)
+	assert.Equal(limit, 1, "we should get page parameter correctly set")
 }
 
 func Test_PaginateMiddleware(t *testing.T) {
+	type Expected struct {
+		page  int
+		limit int
+	}
 	tests := []struct {
-		name   string
-		page   string
-		limit  string
-		query  string
-		status int
+		name     string
+		query    string
+		expected Expected
+		page     string
+		limit    string
+		status   int
 	}{
 		{
-			name:   "OK",
-			page:   "10",
-			limit:  "100",
-			query:  "/?page=10&limit=100",
+			name:  "OK",
+			query: "/?page=10&limit=100",
+			expected: Expected{
+				page:  10,
+				limit: 100,
+			},
 			status: http.StatusOK,
 		},
 		{
-			name:   "default values",
-			page:   "0",
-			limit:  "10",
-			query:  "/",
+			name:  "default values",
+			query: "/",
+			expected: Expected{
+				page:  0,
+				limit: 10,
+			},
 			status: http.StatusOK,
 		},
 		{
-			name:   "invalid page value",
-			page:   "",
-			limit:  "10",
-			query:  "/?page=-1",
+			name:  "invalid page value",
+			query: "/?page=-1",
+			expected: Expected{
+				page:  0,
+				limit: 10,
+			},
 			status: http.StatusBadRequest,
 		},
 		{
-			name:   "invalid page value (not number)",
-			page:   "",
-			limit:  "",
-			query:  "/?page=xy",
+			name:  "invalid page value (not number)",
+			query: "/?page=xy",
+			expected: Expected{
+				page:  0,
+				limit: 0,
+			},
 			status: http.StatusBadRequest,
 		},
 		{
-			name:   "invalid limit value",
-			page:   "",
-			limit:  "",
-			query:  "/?limit=-1",
+			name:  "invalid limit value",
+			query: "/?limit=-1",
+			expected: Expected{
+				page:  0,
+				limit: 0,
+			},
 			status: http.StatusBadRequest,
 		},
 		{
-			name:   "invalid limit value (not number)",
-			page:   "",
-			limit:  "",
-			query:  "/?limit=aa",
+			name:  "invalid limit value (not number)",
+			query: "/?limit=aa",
+			expected: Expected{
+				page:  0,
+				limit: 10,
+			},
 			status: http.StatusBadRequest,
 		},
 	}
@@ -93,13 +112,11 @@ func Test_PaginateMiddleware(t *testing.T) {
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-				page, ok := PageParam(r.Context())
-				assert.True(ok, "should parse page parameter correctly")
-				assert.Equal(tt.page, page, "page parameter not in request context: got %q want %q", page, tt.page)
+				page := PageParam(r.Context())
+				assert.Equal(tt.expected.page, page, "page parameter not in request context: got %q want %q", page, tt.expected.page)
 
-				limit, ok := LimitParam(r.Context())
-				assert.True(ok, "should parse limit parameter correctly")
-				assert.Equal(tt.limit, limit, "limit parameter not in request context: got %q want %q", limit, tt.limit)
+				limit := LimitParam(r.Context())
+				assert.Equal(tt.expected.limit, limit, "limit parameter not in request context: got %q want %q", limit, tt.expected.limit)
 			})
 
 			rr := httptest.NewRecorder()

@@ -4,7 +4,7 @@ import "github.com/stereoit/eventival/pkg/user/domain/model"
 
 // UserRepository describe interface
 type UserRepository interface {
-	FindAll() ([]*model.User, error)
+	FindAll(page, limit int) ([]*model.User, error)
 	FindByEmail(email string) (*model.User, error)
 	FindByID(id string) (*model.User, error)
 	Save(user *model.User) error

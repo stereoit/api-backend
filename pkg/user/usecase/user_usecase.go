@@ -10,7 +10,7 @@ import (
 
 // UserUsecase defines interface for all user usecases
 type UserUsecase interface {
-	ListAllUsers() ([]*User, error)
+	ListAllUsers(page, limit int) ([]*User, error)
 	RegisterUser(email string) (string, error)
 	FindByID(id string) (*User, error)
 	UpdateUser(*User) error
@@ -30,8 +30,8 @@ func NewUserUsecase(repo repository.UserRepository, service service.UserService)
 	}
 }
 
-func (u *userUsecase) ListAllUsers() ([]*User, error) {
-	users, err := u.repo.FindAll()
+func (u *userUsecase) ListAllUsers(page, limit int) ([]*User, error) {
+	users, err := u.repo.FindAll(page, limit)
 	if err != nil {
 		return nil, err
 	}

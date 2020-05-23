@@ -20,8 +20,10 @@ func TestUserRepository_New(t *testing.T) {
 
 func TestUserRepository_FindAll(t *testing.T) {
 	r := storage.NewUserRepository()
+	page := 0
+	limit := 1
 
-	users, err := r.FindAll()
+	users, err := r.FindAll(page, limit)
 	if err != nil {
 		t.Fatalf("Error obtaining all users = %v", err)
 	}
@@ -31,7 +33,7 @@ func TestUserRepository_FindAll(t *testing.T) {
 	}
 
 	r.Save(model.NewUser("1", "email"))
-	users, err = r.FindAll()
+	users, err = r.FindAll(page, limit)
 	if err != nil {
 		t.Fatalf("Error obtaining all users = %v", err)
 	}

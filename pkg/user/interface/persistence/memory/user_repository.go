@@ -21,7 +21,8 @@ func NewUserRepository() repository.UserRepository {
 	}
 }
 
-func (r *userRepository) FindAll() ([]*model.User, error) {
+// TODO implement page, limit test + implementation
+func (r *userRepository) FindAll(page, limit int) ([]*model.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

@@ -30,7 +30,10 @@ func NewUserService(userUsecase usecase.UserUsecase) UserService {
 }
 
 func (s *userService) ListUser(ctx context.Context, in *protocol.ListUserRequestType) (*protocol.ListUserResponseType, error) {
-	users, err := s.userUsecase.ListAllUsers()
+	// TODO: parametrize GRPC service
+	page := 0
+	limit := 1
+	users, err := s.userUsecase.ListAllUsers(page, limit)
 	if err != nil {
 		return nil, err
 	}
