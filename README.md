@@ -69,6 +69,10 @@ or
 
 ## Testing
 
+One integration test depends on having MONGO DB running, so either comment the test in `pkg/user/di/registry_test.go` or run this command before testing:
+
+    $ podman run -p 27017:27017 --name mongo -d mongo
+
 For unit tests run:
 
     $ make test
